@@ -1,0 +1,50 @@
+name: 🔍 Vigía de Empleo Semanal
+
+on:
+  schedule:
+    # Todos los lunes a las 08:00 CET (07:00 UTC)
+    - cron: '0 7 * * 1'
+  
+  # Permite lanzarlo manualmente desde GitHub para probar
+  workflow_dispatch:
+
+jobs:
+  buscar-empleo:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: 🔍 Ejecutar búsqueda de empleo
+        env:
+          ANTHROPIC_API_KEY:    ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_ADDRESS:        ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD:   ${{ secrets.GMAIL_APP_PASSWORD }}
+          DESTINATARIO_EMAIL:   ${{ secrets.DESTINATARIO_EMAIL }}
+        run: python job_alert.py
+
+      - name: 💾 Commit skills tracker actualizado
+        run: |
+          git config user.name "vigia-bot"
+          git config user.email "actions@github.com"
+          git add skills_tracker.json
+          git diff --staged --quiet || git commit -m "📊 skills tracker $(date +%Y-%m-%d)"
+          git push
+
+      - name: 📄 Guardar preview del email (artefacto)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: email-preview-${{ github.run_number }}
+          path: email_preview.html
+          retention-days: 7

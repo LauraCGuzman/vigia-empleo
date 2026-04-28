@@ -1,0 +1,115 @@
+# ─────────────────────────────────────────────────────────────────
+# VIGÍA DE EMPLEO — Configuración personal
+# Edita este archivo. No toques job_alert.py salvo para ajustes
+# avanzados de lógica de puntuación.
+# ─────────────────────────────────────────────────────────────────
+
+# ── Tu perfil ────────────────────────────────────────────────────
+# Claude usa este texto para evaluar si cada oferta encaja contigo.
+# Sé concreto: años de experiencia, stack técnico, tipo de empresa,
+# restricciones de ubicación, idiomas.
+
+perfil: |
+  Ingeniero/a de datos con X años de experiencia en [sector].
+  
+  Skills técnicas consolidadas:
+  - Python (pandas, NumPy) — uso diario en producción
+  - [añade tus skills reales]
+  
+  Formación completada:
+  - [certificados o títulos relevantes]
+  
+  Portfolio:
+  - [proyectos públicos con impacto medible]
+  
+  Objetivo: [rol objetivo] en [tipo de empresa].
+  Acepta híbrido o remoto. Ubicación: [ciudad].
+  Idiomas: [idiomas y nivel].
+
+
+# ── Búsquedas ────────────────────────────────────────────────────
+# Lista de pares [query, location]. Añade o quita según tu objetivo.
+# "Spain" para búsquedas en inglés, "España" para español.
+
+busquedas:
+  - ["Data Scientist", "Spain"]
+  - ["Data Analyst", "Spain"]
+  - ["Machine Learning Engineer", "Spain"]
+  - ["Analytics Engineer", "Spain"]
+  - ["Python Developer data", "Spain"]
+  # Añade búsquedas específicas de tu sector:
+  # - ["Data Scientist energy", "Spain"]
+  # - ["Analista de datos energía", "España"]
+
+
+# ── Empresas objetivo ────────────────────────────────────────────
+# Aparecen marcadas con 🎯 en el email pero NO se filtran.
+# Todas las ofertas relevantes llegan; estas van destacadas.
+# Escribe en minúsculas; la comparación es case-insensitive.
+
+empresas_objetivo:
+  # Ejemplos — reemplaza con las tuyas:
+  - "nombre empresa 1"
+  - "nombre empresa 2"
+  - "nombre empresa 3"
+
+
+# ── Palabras clave de exclusión ───────────────────────────────────
+# Ofertas que contengan estas palabras en título o descripción
+# se descartan antes del análisis con IA (ahorra tokens y ruido).
+
+exclusiones:
+  - "becario"
+  - "beca"
+  - "prácticas"
+  - "internship"
+  - "intern"
+  - "sin experiencia"
+  - "recién titulado"
+  - "recien titulado"
+  - "student"
+  - "estudiante"
+  - "trainee"
+
+
+# ── Tu nivel actual de skills ────────────────────────────────────
+# Usado para el gap analysis en el email y el skills dashboard.
+# "yes"      → consolidado (lo pones en el CV sin problema)
+# "learning" → en curso (estás aprendiéndolo ahora mismo)
+# "no"       → pendiente (lo ves en ofertas pero aún no lo tienes)
+# Actualiza esta lista a medida que avanzas.
+
+mis_skills:
+  # Lenguajes
+  Python: "yes"
+  SQL: "no"
+  R: "no"
+  Scala: "no"
+  # Librerías DS
+  pandas: "yes"
+  NumPy: "yes"
+  "scikit-learn": "no"
+  matplotlib: "yes"
+  # ML/DL
+  TensorFlow: "no"
+  PyTorch: "no"
+  XGBoost: "no"
+  "series temporales": "no"
+  forecasting: "no"
+  "anomaly detection": "no"
+  # Cloud/MLOps
+  AWS: "no"
+  Azure: "no"
+  GCP: "no"
+  Docker: "no"
+  "GitHub Actions": "no"
+  MLflow: "no"
+  Airflow: "no"
+  # Datos
+  ETL: "no"
+  PySpark: "no"
+  dbt: "no"
+  # IA generativa
+  LLMs: "no"
+  RAG: "no"
+  "prompt engineering": "no"

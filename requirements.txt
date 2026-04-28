@@ -1,0 +1,6 @@
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+python-jobspy>=1.1.4
+anthropic>=0.40.0
+lxml>=4.9.0
+pyyaml>=6.0.0

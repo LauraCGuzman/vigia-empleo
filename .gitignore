@@ -1,0 +1,16 @@
+# Entorno Python
+__pycache__/
+*.py[cod]
+.venv/
+env/
+venv/
+
+# Salidas locales
+email_preview.html
+
+# El tracker se genera automáticamente — el repo incluye uno vacío de ejemplo.
+# Si quieres versionar tu histórico, comenta esta línea.
+# skills_tracker.json
+
+# Variables de entorno locales
+.env
