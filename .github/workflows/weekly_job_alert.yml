@@ -11,7 +11,8 @@ on:
 jobs:
   buscar-empleo:
     runs-on: ubuntu-latest
-    
+    permissions:
+      contents: write
     steps:
       - name: 📥 Checkout del repositorio
         uses: actions/checkout@v4
