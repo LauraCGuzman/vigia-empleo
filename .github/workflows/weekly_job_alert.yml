@@ -1,9 +1,9 @@
 name: 🔍 Vigía de Empleo Semanal
 
 on:
-  schedule:
+  #schedule:
     # Todos los lunes a las 08:00 CET (07:00 UTC)
-    - cron: '0 3 * * 1'
+   # - cron: '0 3 * * 1'
 
   # Permite lanzarlo manualmente desde GitHub para probar
   workflow_dispatch:
