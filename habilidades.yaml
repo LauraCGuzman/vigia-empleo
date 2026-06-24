@@ -1,32 +1,39 @@
 # ══════════════════════════════════════════════════════════════
-# HABILIDADES — Vigía de Empleo
+# SKILLS — Job Sentinel  ·  HABILIDADES — Vigía de Empleo
 # ══════════════════════════════════════════════════════════════
+#
+# This file defines your technical skills and current level.
+# The system uses them to:
+#   1. Identify which skills the market demands each week.
+#   2. Show your status for each skill in the email and dashboard.
 #
 # Este archivo define tus skills técnicas y tu nivel actual.
 # El sistema las usa para:
 #   1. Identificar qué skills pide el mercado cada semana.
 #   2. Mostrar en el email y el dashboard tu estado de cada una.
 #
-# CÓMO EDITAR:
-#   - nivel: consolidado  → ya lo dominas (verde ✅)
-#   - nivel: aprendiendo  → en proceso (naranja 🔄)
-#   - nivel: pendiente    → aún no lo tienes (rojo ❌)
+# HOW TO EDIT / CÓMO EDITAR:
+#   - nivel: consolidado  → you already master it (green ✅)  /  ya lo dominas (verde ✅)
+#   - nivel: aprendiendo  → in progress (orange 🔄)  /  en proceso (naranja 🔄)
+#   - nivel: pendiente    → not yet (red ❌)  /  aún no lo tienes (rojo ❌)
 #
+#   - aliases: other names the skill might appear under in listings
+#              (in English, in Spanish, abbreviations...). Case-insensitive.
 #   - aliases: otros nombres con los que puede aparecer en las ofertas
-#     (en inglés, en español, abreviaturas...). No distingue mayúsculas.
+#              (en inglés, en español, abreviaturas...). No distingue mayúsculas.
 #
-# AÑADIR UNA SKILL NUEVA:
-#   - nombre: Mi Nueva Skill
+# ADDING A NEW SKILL / AÑADIR UNA SKILL NUEVA:
+#   - nombre: My New Skill
 #     nivel: pendiente
-#     aliases: [mi nueva skill, otra forma de escribirlo]
+#     aliases: [my new skill, another way to write it]
 #
 # ══════════════════════════════════════════════════════════════
 
 habilidades:
 
-  # ── Lenguajes de programación ──────────────────────────────
+  # ── Programming languages / Lenguajes de programación ──────
   - nombre: Python
-    nivel: consolidado        # ← cambia esto según tu nivel real
+    nivel: consolidado        # ← change this to your real level / cambia esto según tu nivel real
     aliases: [python]
 
   - nombre: SQL
@@ -45,7 +52,7 @@ habilidades:
     nivel: pendiente
     aliases: [java]
 
-  # ── Librerías de Data Science ───────────────────────────────
+  # ── Data Science libraries / Librerías de Data Science ─────
   - nombre: pandas
     nivel: pendiente
     aliases: [pandas]
@@ -222,7 +229,7 @@ habilidades:
     nivel: pendiente
     aliases: [powerbi, power bi]
 
-  # ── IA Generativa ────────────────────────────────────────────
+  # ── Generative AI / IA Generativa ───────────────────────────
   - nombre: LLMs
     nivel: pendiente
     aliases: [llms, llm, large language models]
@@ -247,6 +254,7 @@ habilidades:
     nivel: pendiente
     aliases: [agentic ai, agentic systems, ai agents, sistemas agénticos]
 
+  # ── Energy / industrial / climate domain ────────────────────
   # ── Dominio energético / industrial / climate ────────────────
   - nombre: Energy
     nivel: pendiente

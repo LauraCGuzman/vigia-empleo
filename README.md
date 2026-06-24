@@ -1,3 +1,268 @@
+# 🔍 Job Sentinel / Vigía de Empleo
+
+[English](#english) · [Español](#español)
+
+---
+
+<a id="english"></a>
+
+Automated job alert system with AI filtering. Runs every Monday, analyses listings with Claude, extracts the most in-demand skills, and sends a weekly email with relevant opportunities ranked by score.
+
+---
+
+## How it works
+
+```
+LinkedIn / Indeed / Climatebase
+         │
+         ▼
+   Quick filter          ← discards internships, traineeships and irrelevant titles
+         │
+         ▼
+  Flag target companies  ← 🎯 flag, no discard
+         │
+         ▼
+   Deduplication
+         │
+         ▼
+  Claude analysis        ← score 1-10 + red flag detection + skills extraction
+         │
+         ▼
+  Weekly email           ← listings ranked by score + market skills table
+         │
+         ▼
+  skills_tracker.json    ← updated in the repo automatically
+```
+
+---
+
+## Customisation — the three files you need to edit
+
+You don't need to touch the code. All configuration lives in three files:
+
+### `perfil.txt` — Your professional profile
+
+Write here who you are, your experience, and what you're looking for. Claude reads it to assess whether each listing fits you.
+
+**How to edit it:** open it with any text editor (Notepad, VS Code, etc.) and write in natural language, as if it were a short CV. The more specific you are about your skills and constraints (e.g. "I can't relocate to London"), the better the filtering.
+
+---
+
+### `habilidades.yaml` — Your skills and current level
+
+Define which technologies you know and where you stand. The system uses them to show, in each email, whether the skills the market requires are ones you already have or still need to learn.
+
+```yaml
+- nombre: Python
+  nivel: consolidado    # consolidado | aprendiendo | pendiente
+  aliases: [python]     # other names the skill might appear under in listings
+```
+
+**How to edit it:**
+- Change `nivel` to `consolidado`, `aprendiendo`, or `pendiente` to reflect your real situation.
+- If you learn a new skill, move it from `pendiente` to `aprendiendo` or `consolidado`.
+- To add a skill not in the list:
+  ```yaml
+  - nombre: My New Skill
+    nivel: aprendiendo
+    aliases: [my new skill, another way to write it]
+  ```
+
+> **Note:** The skills dashboard (`skills_dashboard.html`) has its own copy of the levels inside the JavaScript code. If you change levels in `habilidades.yaml`, remember to update them in the dashboard too so they match.
+
+---
+
+### `config.yaml` — Everything else
+
+Controls platforms, searches, target companies, filters, and AI criteria.
+
+#### Enable or disable platforms
+
+```yaml
+plataformas:
+  linkedin: true
+  indeed: true
+  climatebase: false   # ← disable Climatebase
+```
+
+#### Change searches
+
+```yaml
+busquedas_linkedin_indeed:
+  - ["Data Scientist energy", "Spain"]
+  - ["Your target role", "Spain"]    # ← add or change lines
+```
+
+#### Add target companies
+
+```yaml
+empresas_objetivo:
+  tier_1_maxima_prioridad:
+    - google
+    - your favourite company    # ← add here
+```
+
+#### Adjust the score threshold
+
+```yaml
+configuracion_general:
+  puntuacion_minima: 4   # raise to receive fewer but better-matched results
+```
+
+#### Change AI penalties
+
+Can you relocate? Don't mind a DevOps-heavy stack? Edit the `penalizaciones` section in `config.yaml` to suit your situation:
+
+```yaml
+penalizaciones:
+  # Remove the city line if you can go on-site:
+  # - "Location [city] without mention of remote/hybrid: -2"
+  - "Requires >5 years of specific DS/ML experience: -2"
+  ...
+```
+
+---
+
+## Initial setup
+
+### 1. Clone and prepare
+
+```bash
+git clone https://github.com/YOUR_USERNAME/vigia-de-empleo.git
+cd vigia-de-empleo
+pip install -r requirements.txt
+```
+
+### 2. Edit the configuration files
+
+1. Open `perfil.txt` and write your profile.
+2. Open `habilidades.yaml` and adjust your levels.
+3. Open `config.yaml` and customise the searches, companies, and filters.
+
+### 3. Claude API key
+
+1. Go to [console.anthropic.com](https://console.anthropic.com)
+2. Create an API key
+3. The system uses `claude-haiku` by default — approximate cost of **€0.02–0.05 per weekly run**
+
+> You can change the model in `config.yaml` → `configuracion_general` → `modelo_ia`.
+
+### 4. Set up Gmail for automated sending
+
+Gmail requires an **App Password** for SMTP sending:
+
+1. Enable [two-step verification](https://myaccount.google.com/security)
+2. Go to [App Passwords](https://myaccount.google.com/apppasswords)
+3. Generate a password for "Mail" (16 characters)
+4. Save it — it's only shown once
+
+### 5. GitHub Secrets
+
+**Settings → Secrets and variables → Actions → New repository secret**
+
+| Secret | Value |
+|--------|-------|
+| `ANTHROPIC_API_KEY` | Your Anthropic API key |
+| `GMAIL_ADDRESS` | Your Gmail address |
+| `GMAIL_APP_PASSWORD` | The 16-character App Password |
+| `DESTINATARIO_EMAIL` | Email where you'll receive alerts |
+
+> ⚠️ Never put keys directly in the code or configuration files.
+
+### 6. Workflow permissions
+
+To allow the pipeline to update `skills_tracker.json` in the repo:
+
+**Settings → Actions → General → Workflow permissions → Read and write permissions** ✅
+
+### 7. Test manually
+
+**GitHub → Actions → Vigía de Empleo Semanal → Run workflow**
+
+Or locally:
+
+```bash
+export ANTHROPIC_API_KEY="your_key"
+export GMAIL_ADDRESS="you@gmail.com"
+export GMAIL_APP_PASSWORD="your_app_password"
+export DESTINATARIO_EMAIL="you@gmail.com"
+
+python job_alert.py
+```
+
+Without environment variables configured, the script saves the result as `email_preview.html`.
+
+---
+
+## Skills tracker and dashboard
+
+The system automatically extracts technical skills from each analysed listing and accumulates them in `skills_tracker.json`. This lets you:
+
+- See which technologies appear most in the market week by week.
+- Identify the gap between what the market demands and your current level.
+
+To visualise it, open `skills_dashboard.html` in the browser and load `skills_tracker.json` with the upload button.
+
+---
+
+## Changing the schedule
+
+In `.github/workflows/weekly_job_alert.yml`:
+
+```yaml
+- cron: '0 3 * * 1'   # Monday 08:00 CET (03:00 UTC)
+# '0 3 * * 2'         → Tuesday
+# '0 3 * * 1,4'       → Monday and Thursday
+```
+
+---
+
+## Project structure
+
+```
+vigia-de-empleo/
+├── config.yaml                    # ← EDIT: platforms, searches, companies, filters, AI
+├── perfil.txt                     # ← EDIT: your professional profile
+├── habilidades.yaml               # ← EDIT: your skills and levels
+├── .github/
+│   └── workflows/
+│       └── weekly_job_alert.yml   # Weekly automation
+├── scrapers/
+│   └── climatebase.py             # Climatebase scraper (do not edit)
+├── job_alert.py                   # Main script (do not edit)
+├── skills_tracker.json            # Skills history (updated every Monday)
+├── skills_dashboard.html          # Interactive skills tracker visualisation
+├── migrate_skills_tracker.py      # Migration tool (advanced use)
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Notes on scraping
+
+The system uses [JobSpy](https://github.com/Bunsly/JobSpy) to access LinkedIn and Indeed. LinkedIn detects aggressive scraping — the script includes pauses between searches to minimise blocks. If LinkedIn starts failing consistently, Indeed continues to work independently. You can disable LinkedIn in `config.yaml` if it causes problems.
+
+---
+
+## Red flag detection
+
+Claude doesn't just score technical fit — it also detects warning signs in the description:
+
+- Non-existent data teams (*"you'll be the first data person"*, *"you'll report to the CTO"*)
+- *"do-everything"* roles without clear specialisation
+- Unstructured environments (*"we value autonomy and initiative"*)
+
+Alerts appear marked with ⚠️ in the email. You can customise what alerts Claude looks for in `config.yaml` → `criterios_ia` → `senales_alerta`.
+
+---
+
+*Last updated: June 2026*
+
+---
+
+<a id="español"></a>
+
 # 🔍 Vigía de Empleo
 
 Sistema automatizado de alertas de empleo con filtrado por IA. Se ejecuta cada lunes, analiza las ofertas con Claude, extrae los skills más demandados y envía un email con las oportunidades relevantes ordenadas por puntuación.

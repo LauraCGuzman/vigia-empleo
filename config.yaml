@@ -1,59 +1,70 @@
 # ══════════════════════════════════════════════════════════════
-# CONFIGURACIÓN — Vigía de Empleo
+# CONFIGURATION — Job Sentinel  ·  CONFIGURACIÓN — Vigía de Empleo
 # ══════════════════════════════════════════════════════════════
+#
+# This file controls how the job search system works.
+# Edit it to suit your preferences. No need to touch the code.
 #
 # Este archivo controla cómo funciona el buscador de empleo.
 # Edítalo según tus preferencias. No necesitas tocar el código.
 #
-# SINTAXIS BÁSICA YAML:
-#   clave: valor              → ajuste simple
-#   - elemento               → un ítem de una lista
-#   # texto                  → comentario (el programa lo ignora)
-#   true / false             → activado / desactivado
+# BASIC YAML SYNTAX / SINTAXIS BÁSICA YAML:
+#   key: value                → simple setting  /  ajuste simple
+#   - element                 → list item  /  ítem de una lista
+#   # text                    → comment (ignored)  /  comentario (el programa lo ignora)
+#   true / false              → on/off  /  activado / desactivado
 #
 # ══════════════════════════════════════════════════════════════
 
 
 # ──────────────────────────────────────────────────────────────
-# 1. PLATAFORMAS
+# 1. PLATFORMS / PLATAFORMAS
+# Enable or disable each job source.
 # Activa o desactiva cada fuente de ofertas.
 # ──────────────────────────────────────────────────────────────
 
 plataformas:
-  linkedin: true       # Busca en LinkedIn
-  indeed: true         # Busca en Indeed
-  climatebase: true    # Busca en Climatebase (ofertas de clima y sostenibilidad, mayormente en inglés y remotas)
+  linkedin: true       # Search on LinkedIn / Busca en LinkedIn
+  indeed: true         # Search on Indeed / Busca en Indeed
+  climatebase: true    # Search on Climatebase (climate & sustainability jobs, mainly in English and remote / ofertas de clima y sostenibilidad, mayormente en inglés y remotas)
 
 
 # ──────────────────────────────────────────────────────────────
-# 2. CONFIGURACIÓN GENERAL
+# 2. GENERAL SETTINGS / CONFIGURACIÓN GENERAL
 # ──────────────────────────────────────────────────────────────
 
 configuracion_general:
 
+  # Minimum score (1-10) for a listing to appear in the email.
+  # Raise to receive fewer but better-matched results.
+  # Lower to see more even if they fit less.
   # Puntuación mínima (1-10) para que una oferta aparezca en el email.
   # Sube el número para recibir menos ofertas pero más ajustadas.
   # Bájalo para ver más aunque encajen menos.
   puntuacion_minima: 4
 
+  # Maximum number of listings analysed by AI per run.
+  # Raising this number increases the Claude API cost.
   # Máximo de ofertas que se analizan con IA por ejecución.
   # Subir este número aumenta el coste de la API de Claude.
   max_ofertas: 300
 
-  # Modelo de IA para analizar las ofertas.
-  # claude-haiku-4-5-20251001  → más rápido y barato (recomendado)
-  # claude-sonnet-4-6          → más preciso pero más caro
+  # AI model for analysing listings.
+  # claude-haiku-4-5-20251001  → faster and cheaper (recommended)  /  más rápido y barato (recomendado)
+  # claude-sonnet-4-6          → more precise but more expensive  /  más preciso pero más caro
   modelo_ia: "claude-haiku-4-5-20251001"
 
 
 # ──────────────────────────────────────────────────────────────
-# 3. BÚSQUEDAS EN LINKEDIN E INDEED
+# 3. LINKEDIN & INDEED SEARCHES / BÚSQUEDAS EN LINKEDIN E INDEED
+# Format: ["search term", "country or city"]
+# Add or remove lines to suit what you want to search.
 # Formato: ["término de búsqueda", "país o ciudad"]
 # Añade o quita líneas según lo que quieras buscar.
 # ──────────────────────────────────────────────────────────────
 
 busquedas_linkedin_indeed:
-  # ← Reemplaza estos ejemplos con tus propias búsquedas
+  # ← Replace these examples with your own searches / Reemplaza estos ejemplos con tus propias búsquedas
   - ["Data Scientist", "Spain"]
   - ["Data Analyst", "Spain"]
   - ["Machine Learning Engineer", "Spain"]
@@ -65,13 +76,15 @@ busquedas_linkedin_indeed:
 
 
 # ──────────────────────────────────────────────────────────────
-# 4. BÚSQUEDAS EN CLIMATEBASE
+# 4. CLIMATEBASE SEARCHES / BÚSQUEDAS EN CLIMATEBASE
+# English only (Climatebase indexes mainly in English).
+# The "remote only" filter is applied automatically.
 # Solo en inglés (Climatebase indexa principalmente en inglés).
 # El filtro de "solo remoto" se aplica automáticamente.
 # ──────────────────────────────────────────────────────────────
 
 busquedas_climatebase:
-  # ← Reemplaza estos ejemplos con tus propias búsquedas
+  # ← Replace these examples with your own searches / Reemplaza estos ejemplos con tus propias búsquedas
   - "data scientist"
   - "data analyst"
   - "machine learning engineer"
@@ -80,7 +93,10 @@ busquedas_climatebase:
 
 
 # ──────────────────────────────────────────────────────────────
-# 5. EMPRESAS DE INTERÉS
+# 5. TARGET COMPANIES / EMPRESAS DE INTERÉS
+# Listings from these companies appear marked with 🎯 in the email.
+# Other listings are not discarded — it's just a visual marker.
+# Write names in lowercase.
 # Las ofertas de estas empresas aparecen marcadas con 🎯 en el email.
 # No se descartan otras ofertas — es solo un marcador visual.
 # Escribe los nombres en minúsculas.
@@ -88,7 +104,7 @@ busquedas_climatebase:
 
 empresas_objetivo:
 
-  # ← Reemplaza estos ejemplos con las empresas que te interesen
+  # ← Replace these examples with companies you're interested in / Reemplaza estos ejemplos con las empresas que te interesen
   tier_1_maxima_prioridad:
     - google
     - microsoft
@@ -109,7 +125,9 @@ empresas_objetivo:
 
 
 # ──────────────────────────────────────────────────────────────
-# 6. FILTROS AUTOMÁTICOS
+# 6. AUTOMATIC FILTERS / FILTROS AUTOMÁTICOS
+# Listings containing these words are discarded without consulting the AI.
+# Useful for excluding internships, scholarships, entry-level positions, etc.
 # Ofertas que contengan estas palabras se descartan sin consultar la IA.
 # Útil para excluir prácticas, becas, puestos sin experiencia, etc.
 # ──────────────────────────────────────────────────────────────
@@ -129,7 +147,10 @@ palabras_excluir:
 
 
 # ──────────────────────────────────────────────────────────────
-# 7. CRITERIOS DE LA IA
+# 7. AI CRITERIA / CRITERIOS DE LA IA
+# This section defines how Claude evaluates and scores each listing.
+# Edit it to change which roles are prioritised,
+# which penalties apply to your situation, or which red flags to watch for.
 # Esta sección define cómo Claude evalúa y puntúa cada oferta.
 # Edítala si quieres cambiar qué tipo de roles se priorizan,
 # qué penalizaciones aplican a tu situación o qué señales de alerta vigilar.
@@ -137,6 +158,8 @@ palabras_excluir:
 
 criterios_ia:
 
+  # Sector axes — Claude classifies each listing into one of these axes.
+  # You can change the descriptions or add new axes.
   # Ejes sectoriales — Claude clasifica cada oferta en uno de estos ejes.
   # Puedes cambiar las descripciones o añadir nuevos ejes.
   ejes:
@@ -158,6 +181,8 @@ criterios_ia:
       data/ML genérico sin dominio claro, consultoría delivery,
       sectores fuera de los anteriores.
 
+  # Score bands — defines what each score means (1-10).
+  # Adapt the descriptions to your profile and what you're looking for.
   # Bandas de puntuación — define qué puntúa cada nota (1-10).
   # Adapta las descripciones a tu perfil y lo que buscas.
   bandas_puntuacion: |
@@ -166,6 +191,8 @@ criterios_ia:
     - 4-5: datos o ingeniería con encaje técnico pero sin componente sectorial relevante, o rol principalmente BI/reporting.
     - <4: sin relación con datos o ingeniería técnica.
 
+  # Penalties — subtracted from the base score.
+  # Adapt or remove those that don't apply to your situation.
   # Penalizaciones — se restan de la puntuación base.
   # Adapta o elimina las que no apliquen a tu situación.
   penalizaciones:
@@ -176,6 +203,7 @@ criterios_ia:
     - "Ubicación en UE o UK sin mención de 'remote', 'EU remote' o 'fully remote': -1"
     - "Ubicación fuera de UE/UK sin mención explícita de 'global remote', 'fully remote worldwide' o equivalente: -2"
 
+  # What NOT to penalise — explicit instructions so Claude doesn't deduct points for these.
   # Qué NO penalizar — instrucciones explícitas para que Claude no reste puntos por estos motivos.
   no_penalizar:
     - "Idioma de la oferta: las ofertas en inglés son tan válidas como las de español."
@@ -183,6 +211,7 @@ criterios_ia:
     - "Empresa internacional sin oficina local: si el rol es remoto real, no penalices."
     - "Ofertas climate tech de UK/DE/FR que sean remotas pan-europeas reales aunque la 'location' diga una ciudad concreta."
 
+  # Discard criteria — these conditions mark a listing as unsuitable (encaja=false).
   # Criterios de descarte — estas condiciones marcan la oferta como no apta (encaja=false).
   criterios_descarte:
     - "Más de 6 años de experiencia exigida en DS/ML puro"
@@ -191,6 +220,7 @@ criterios_ia:
     - "100% presencial en ubicación que el usuario no acepta"
     - "Ubicación fuera de UE/UK que no mencione explícitamente 'remote anywhere', 'global remote' o equivalente"
 
+  # Red flags — Claude includes them in 'punto_clave' with ⚠️ when detected.
   # Señales de alerta — Claude las incluye en el 'punto_clave' con ⚠️ cuando las detecta.
   senales_alerta:
     - "'reportarás al CTO', 'serás el primero en datos', 'construir desde cero'"

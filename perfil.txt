@@ -1,28 +1,44 @@
 # ══════════════════════════════════════════════════════════════
+# PROFESSIONAL PROFILE — Job Sentinel
 # PERFIL PROFESIONAL — Vigía de Empleo
 # ══════════════════════════════════════════════════════════════
 #
+# Claude reads this file to assess whether each listing fits you.
 # Claude lee este archivo para evaluar si cada oferta encaja contigo.
 #
-# CÓMO EDITARLO:
+# HOW TO EDIT IT / CÓMO EDITARLO:
+#   Delete the example below and write your own profile in natural
+#   language, as if you were explaining professionally who you are.
+#   ─────────────────────────────────────────────────────────────
 #   Borra el ejemplo de abajo y escribe tu propio perfil en lenguaje
 #   natural, como si le explicaras a alguien quién eres profesionalmente.
 #
-# QUÉ INCLUIR:
-#   - Tu formación (carrera, másteres, certificaciones relevantes)
-#   - Tu experiencia (años, sectores, tecnologías que usas en el día a día)
-#   - Tus puntos fuertes y lo que te diferencia
-#   - Qué tipo de rol buscas (Data Scientist, Data Analyst, ML Engineer...)
-#   - Qué sectores te interesan (energía, salud, fintech, industria...)
-#   - Tu modalidad preferida (presencial, híbrido, remoto)
-#   - Tu ubicación y si puedes/quieres mudarte
-#   - Idiomas y nivel
+# WHAT TO INCLUDE / QUÉ INCLUIR:
+#   - Training (degree, master's, relevant certifications)
+#     Tu formación (carrera, másteres, certificaciones relevantes)
+#   - Experience (years, sectors, daily technologies)
+#     Tu experiencia (años, sectores, tecnologías que usas en el día a día)
+#   - Strengths and what sets you apart
+#     Tus puntos fuertes y lo que te diferencia
+#   - Type of role you're looking for (Data Scientist, Data Analyst, ML Engineer...)
+#     Qué tipo de rol buscas (Data Scientist, Data Analyst, ML Engineer...)
+#   - Sectors of interest (energy, health, fintech, industry...)
+#     Qué sectores te interesan (energía, salud, fintech, industria...)
+#   - Preferred modality (on-site, hybrid, remote)
+#     Tu modalidad preferida (presencial, híbrido, remoto)
+#   - Location and whether you can/want to relocate
+#     Tu ubicación y si puedes/quieres mudarte
+#   - Languages and level
+#     Idiomas y nivel
 #
+# TIP: the more specific you are, the better the system will filter.
+# You don't need to write much — 10-15 well-written lines are enough.
 # CONSEJO: cuanto más específico seas, mejor filtrará el sistema.
 # No hace falta que sea largo — 10-15 líneas bien escritas son suficientes.
 #
 # ══════════════════════════════════════════════════════════════
-# EJEMPLO (bórralo y escribe el tuyo a partir de aquí):
+# EXAMPLE / EJEMPLO
+# (delete it and write yours from here / bórralo y escribe el tuyo a partir de aquí):
 # ══════════════════════════════════════════════════════════════
 
 Ingeniero/a de datos con 3 años de experiencia trabajando con Python
