@@ -1,0 +1,42 @@
+# ══════════════════════════════════════════════════════════════
+# PERFIL PROFESIONAL — Vigía de Empleo
+# ══════════════════════════════════════════════════════════════
+#
+# Claude lee este archivo para evaluar si cada oferta encaja contigo.
+#
+# CÓMO EDITARLO:
+#   Borra el ejemplo de abajo y escribe tu propio perfil en lenguaje
+#   natural, como si le explicaras a alguien quién eres profesionalmente.
+#
+# QUÉ INCLUIR:
+#   - Tu formación (carrera, másteres, certificaciones relevantes)
+#   - Tu experiencia (años, sectores, tecnologías que usas en el día a día)
+#   - Tus puntos fuertes y lo que te diferencia
+#   - Qué tipo de rol buscas (Data Scientist, Data Analyst, ML Engineer...)
+#   - Qué sectores te interesan (energía, salud, fintech, industria...)
+#   - Tu modalidad preferida (presencial, híbrido, remoto)
+#   - Tu ubicación y si puedes/quieres mudarte
+#   - Idiomas y nivel
+#
+# CONSEJO: cuanto más específico seas, mejor filtrará el sistema.
+# No hace falta que sea largo — 10-15 líneas bien escritas son suficientes.
+#
+# ══════════════════════════════════════════════════════════════
+# EJEMPLO (bórralo y escribe el tuyo a partir de aquí):
+# ══════════════════════════════════════════════════════════════
+
+Ingeniero/a de datos con 3 años de experiencia trabajando con Python
+en entornos de producción. He desarrollado pipelines ETL, dashboards
+analíticos y modelos predictivos básicos para el sector retail.
+
+Tecnologías que uso con soltura: Python (pandas, NumPy, scikit-learn),
+SQL, Git, GitHub Actions. Experiencia inicial con Docker y AWS.
+
+Formación: Grado en Estadística + IBM Data Science Professional Certificate.
+Actualmente estudiando ML Specialization (DeepLearning.ai).
+
+Busco: rol de Data Scientist o Data Analyst en empresa tecnológica o industrial.
+Me interesan especialmente los sectores de energía, manufactura y salud.
+Acepto híbrido o remoto. Ubicación: Madrid. No descarto otras ciudades
+si el rol es muy bueno, pero prefiero no tener que mudarme.
+Idiomas: español nativo, inglés B2.

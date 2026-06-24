@@ -1,10 +1,14 @@
 """
 🔍 Vigía de Empleo
-Busca ofertas via JobSpy (LinkedIn + Indeed), filtra con Claude,
+Busca ofertas via JobSpy (LinkedIn + Indeed) y Climatebase, filtra con Claude,
 extrae skills del mercado y envía email semanal.
 
-Configuración: edita config.yaml (no este archivo).
-Dependencias:  pip install -r requirements.txt
+Toda la configuración está en tres archivos (no necesitas tocar este código):
+  config.yaml      → plataformas, búsquedas, empresas, filtros, criterios de IA
+  perfil.txt       → tu perfil profesional (lo lee Claude para evaluar las ofertas)
+  habilidades.yaml → tus skills y nivel actual (consolidado / aprendiendo / pendiente)
+
+Dependencias: pip install -r requirements.txt
 """
 
 import os
@@ -12,17 +16,11 @@ import smtplib
 import json
 import time
 import re
+import yaml
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 from pathlib import Path
-
-try:
-    import yaml
-    YAML_AVAILABLE = True
-except ImportError:
-    YAML_AVAILABLE = False
-    print("⚠️  PyYAML no disponible. Instala con: pip install pyyaml")
 
 try:
     from jobspy import scrape_jobs
@@ -38,29 +36,60 @@ except ImportError:
     CLAUDE_AVAILABLE = False
     print("⚠️  anthropic no disponible.")
 
+try:
+    from scrapers.climatebase import scrape_climatebase
+    CLIMATEBASE_AVAILABLE = True
+except ImportError:
+    CLIMATEBASE_AVAILABLE = False
+    print("⚠️  scrapers.climatebase no disponible.")
+
 
 # ─────────────────────────────────────────────
-# CARGAR CONFIGURACIÓN
+# CARGA DE CONFIGURACIÓN
 # ─────────────────────────────────────────────
 
 def cargar_config() -> dict:
-    config_path = Path("config.yaml")
-    if not config_path.exists():
-        print("❌ No se encontró config.yaml. Copia config.yaml.example y personalízalo.")
-        raise FileNotFoundError("config.yaml no encontrado")
-    if not YAML_AVAILABLE:
-        raise ImportError("PyYAML no instalado: pip install pyyaml")
-    with open(config_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+    """Carga config.yaml, perfil.txt y habilidades.yaml.
+    Lanza un error claro si algún archivo falta.
+    """
+    for archivo in ["config.yaml", "perfil.txt", "habilidades.yaml"]:
+        if not Path(archivo).exists():
+            raise FileNotFoundError(
+                f"\n❌ No se encuentra '{archivo}'.\n"
+                f"   Asegúrate de que está en la misma carpeta que job_alert.py.\n"
+                f"   Consulta el README para ver cómo rellenarlo."
+            )
+
+    with open("config.yaml", "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
+
+    with open("perfil.txt", "r", encoding="utf-8") as f:
+        config["perfil"] = f.read().strip()
+
+    with open("habilidades.yaml", "r", encoding="utf-8") as f:
+        habilidades_raw = yaml.safe_load(f)
+
+    # Convertir lista de habilidades al formato interno
+    nivel_map = {"consolidado": "yes", "aprendiendo": "learning", "pendiente": "no"}
+    skills = {}
+    for h in habilidades_raw.get("habilidades", []):
+        nombre = h["nombre"]
+        nivel = nivel_map.get(h.get("nivel", "pendiente"), "no")
+        aliases = [a.lower() for a in h.get("aliases", [])]
+        skills[nombre] = {"aliases": aliases, "level": nivel}
+    config["skills"] = skills
+
+    # Aplanar tiers de empresas a lista plana para matching
+    empresas_flat = []
+    for tier_companies in config.get("empresas_objetivo", {}).values():
+        if isinstance(tier_companies, list):
+            empresas_flat.extend(e.lower() for e in tier_companies)
+    config["_empresas_flat"] = empresas_flat
+
+    return config
 
 
-CONFIG            = cargar_config()
-MI_PERFIL         = CONFIG.get("perfil", "")
-SEARCH_QUERIES    = [tuple(q) for q in CONFIG.get("busquedas", [])]
-EMPRESAS_OBJETIVO = [e.lower() for e in CONFIG.get("empresas_objetivo", [])]
-KEYWORDS_EXCLUDE  = [k.lower() for k in CONFIG.get("exclusiones", [])]
-MY_SKILLS         = CONFIG.get("mis_skills", {})
-
+CONFIG = cargar_config()
 SKILLS_TRACKER_PATH = Path("skills_tracker.json")
 
 
@@ -69,38 +98,77 @@ SKILLS_TRACKER_PATH = Path("skills_tracker.json")
 # ─────────────────────────────────────────────
 
 def buscar_ofertas() -> list[dict]:
-    if not JOBSPY_AVAILABLE:
-        print("❌ JobSpy no instalado.")
-        return []
+    """Busca ofertas en las fuentes activas según config.yaml → plataformas.
 
-    print("🔍 Buscando en LinkedIn e Indeed...")
+    Si una fuente está desactivada o falla, las otras siguen funcionando.
+    """
     todas = []
+    plataformas = CONFIG.get("plataformas", {})
+    use_linkedin = plataformas.get("linkedin", True)
+    use_indeed = plataformas.get("indeed", True)
+    use_climatebase = plataformas.get("climatebase", True)
 
-    for query, location in SEARCH_QUERIES:
-        print(f"  → '{query}' en {location}")
-        try:
-            jobs = scrape_jobs(
-                site_name=["linkedin", "indeed"],
-                search_term=query,
-                location=location,
-                results_wanted=10,
-                hours_old=168,
-                country_indeed="Spain",
-            )
-            for _, row in jobs.iterrows():
-                todas.append({
-                    "title":       str(row.get("title", "")).strip(),
-                    "company":     str(row.get("company", "")).strip(),
-                    "url":         str(row.get("job_url", "")).strip(),
-                    "description": str(row.get("description", ""))[:2000].strip(),
-                    "location":    str(row.get("location", "España")).strip(),
-                    "source":      str(row.get("site", "portal")),
-                })
-            time.sleep(4)
-        except Exception as e:
-            print(f"    ⚠️  Error: {e}")
+    # ── Fuente 1: JobSpy (LinkedIn + Indeed) ──
+    site_name = []
+    if use_linkedin:
+        site_name.append("linkedin")
+    if use_indeed:
+        site_name.append("indeed")
 
-    print(f"  📦 {len(todas)} ofertas brutas encontradas")
+    if not site_name:
+        print("⏭️  LinkedIn e Indeed desactivados en config.yaml.")
+    elif not JOBSPY_AVAILABLE:
+        print("⏭️  JobSpy no disponible, saltando LinkedIn/Indeed.")
+    else:
+        label = " + ".join(s.capitalize() for s in site_name)
+        print(f"🔍 Buscando en {label}...")
+        n_jobspy = 0
+        for query, location in CONFIG.get("busquedas_linkedin_indeed", []):
+            print(f"  → '{query}' en {location}")
+            try:
+                jobs = scrape_jobs(
+                    site_name=site_name,
+                    search_term=query,
+                    location=location,
+                    results_wanted=10,
+                    hours_old=168,
+                    country_indeed="Spain",
+                )
+                for _, row in jobs.iterrows():
+                    todas.append({
+                        "title":       str(row.get("title", "")).strip(),
+                        "company":     str(row.get("company", "")).strip(),
+                        "url":         str(row.get("job_url", "")).strip(),
+                        "description": str(row.get("description", ""))[:2000].strip(),
+                        "location":    str(row.get("location", "España")).strip(),
+                        "source":      str(row.get("site", "portal")),
+                    })
+                    n_jobspy += 1
+                time.sleep(4)
+            except Exception as e:
+                print(f"    ⚠️  Error: {e}")
+        print(f"  📦 {label}: {n_jobspy} ofertas")
+
+    # ── Fuente 2: Climatebase (climate tech remota) ──
+    if not use_climatebase:
+        print("⏭️  Climatebase desactivado en config.yaml.")
+    elif not CLIMATEBASE_AVAILABLE:
+        print("⏭️  scrapers.climatebase no disponible.")
+    else:
+        print("\n🌱 Buscando en Climatebase (climate tech remoto EU)...")
+        n_climatebase = 0
+        for query in CONFIG.get("busquedas_climatebase", []):
+            print(f"  → '{query}'")
+            try:
+                resultados = scrape_climatebase(query, max_results=30, only_remote=True)
+                todas.extend(resultados)
+                n_climatebase += len(resultados)
+                time.sleep(1)
+            except Exception as e:
+                print(f"    ⚠️  Error: {e}")
+        print(f"  📦 Climatebase: {n_climatebase} ofertas")
+
+    print(f"\n  📦 TOTAL ofertas brutas (todas las fuentes): {len(todas)}")
     return todas
 
 
@@ -112,7 +180,7 @@ def filtro_rapido(job: dict) -> bool:
     titulo = job.get("title", "").lower()
     desc   = job.get("description", "").lower()
     texto  = titulo + " " + desc
-    if any(ex in texto for ex in KEYWORDS_EXCLUDE):
+    if any(ex in texto for ex in CONFIG.get("palabras_excluir", [])):
         return False
     if len(titulo) < 5:
         return False
@@ -122,19 +190,53 @@ def filtro_rapido(job: dict) -> bool:
 def marcar_empresas_objetivo(ofertas: list[dict]) -> list[dict]:
     for job in ofertas:
         company = job.get("company", "").lower()
-        job["es_objetivo"] = any(emp in company for emp in EMPRESAS_OBJETIVO)
+        job["es_objetivo"] = any(emp in company for emp in CONFIG["_empresas_flat"])
     n_objetivo = sum(1 for j in ofertas if j["es_objetivo"])
     print(f"🏷️  Ofertas de empresas objetivo: {n_objetivo}/{len(ofertas)}")
     return ofertas
 
 
+def _normalize_for_dedup(text: str) -> str:
+    """Normaliza un string para comparación de duplicados:
+    - lowercase
+    - elimina espacios redundantes y signos de puntuación comunes
+    - elimina paréntesis con contenido (ej. '(Madrid)', '(m/f/d)', '(Remote)')
+    - quita sufijos típicos de seniority/género que varían entre listings
+    """
+    if not text:
+        return ""
+    s = text.lower().strip()
+    s = re.sub(r'\([^)]*\)', '', s)
+    s = re.sub(r'[,;:|\-–—/\\]+', ' ', s)
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s
+
+
 def deduplicar(ofertas: list[dict]) -> list[dict]:
-    vistas, unicas = set(), []
+    """Deduplica en dos pasadas:
+    1. Por URL exacta (más rápido, captura re-scrapes).
+    2. Por (título normalizado, empresa normalizada) — captura la misma oferta
+       listada en LinkedIn + Indeed con URLs distintas.
+
+    En caso de colisión cross-source, conserva la primera vista.
+    """
+    vistas_url, vistas_titulo_empresa, unicas = set(), set(), []
     for job in ofertas:
-        url = job.get("url", "")
-        if url and url not in vistas:
-            vistas.add(url)
-            unicas.append(job)
+        url = job.get("url", "").strip()
+        titulo_norm = _normalize_for_dedup(job.get("title", ""))
+        empresa_norm = _normalize_for_dedup(job.get("company", ""))
+        clave_tit_emp = (titulo_norm, empresa_norm)
+
+        if url and url in vistas_url:
+            continue
+        if titulo_norm and empresa_norm and clave_tit_emp in vistas_titulo_empresa:
+            continue
+
+        if url:
+            vistas_url.add(url)
+        if titulo_norm and empresa_norm:
+            vistas_titulo_empresa.add(clave_tit_emp)
+        unicas.append(job)
     return unicas
 
 
@@ -147,6 +249,7 @@ def analizar_con_claude(job: dict) -> dict:
         "encaja": True, "puntuacion": 5,
         "razon": "Análisis IA no disponible. Revisión manual recomendada.",
         "punto_clave": "N/D",
+        "eje": "principal",
         "skills": []
     }
     if not CLAUDE_AVAILABLE:
@@ -156,10 +259,31 @@ def analizar_con_claude(job: dict) -> dict:
         print("  ⚠️  ANTHROPIC_API_KEY no configurada.")
         return fallback
 
-    prompt = f"""Eres un experto en reclutamiento técnico. Analiza si esta oferta encaja con el siguiente perfil y extrae los skills técnicos requeridos.
+    ia_cfg = CONFIG.get("criterios_ia", {})
 
-PERFIL:
-{MI_PERFIL}
+    ejes_text = "\n".join(
+        f'- "{nombre}": {str(desc).strip()}'
+        for nombre, desc in ia_cfg.get("ejes", {}).items()
+    )
+    penalizaciones_text = "\n".join(
+        f"- {p}" for p in ia_cfg.get("penalizaciones", [])
+    )
+    no_penalizar_text = "\n".join(
+        f"- {p}" for p in ia_cfg.get("no_penalizar", [])
+    )
+    criterios_descarte_text = "\n".join(
+        f"- {c}" for c in ia_cfg.get("criterios_descarte", [])
+    )
+    senales_alerta_text = "\n".join(
+        f"- {s}" for s in ia_cfg.get("senales_alerta", [])
+    )
+    bandas_text = str(ia_cfg.get("bandas_puntuacion", "")).strip()
+    skills_canonicos = ", ".join(f'"{k}"' for k in CONFIG["skills"].keys())
+
+    prompt = f"""Eres una experta en reclutamiento técnico para perfiles Data Science con dominio físico/industrial. Analiza si esta oferta encaja con el perfil del usuario, clasifica el eje sectorial y extrae los skills técnicos requeridos.
+
+PERFIL DEL USUARIO:
+{CONFIG["perfil"]}
 
 OFERTA:
 Título: {job.get('title', 'N/D')}
@@ -173,41 +297,56 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional ni bloques de código
   "puntuacion": 7,
   "razon": "explicación breve",
   "punto_clave": "factor clave o alerta",
-  "skills": ["Python", "SQL", "AWS", "scikit-learn"]
+  "eje": "principal",
+  "skills": ["Python", "SQL", "AWS", "scikit-learn", "Time Series"]
 }}
 
-Criterios de puntuación:
-- 8-10: encaje excelente con el perfil y el rol objetivo
-- 6-7: encaje bueno, algunos gaps menores
-- 4-5: encaje parcial, vale la pena revisar
-- <4: poco encaje con el perfil
+═══ CLASIFICACIÓN DE EJE ═══
+Asigna UNO de estos valores al campo "eje":
+{ejes_text}
 
-Señales de alerta en "punto_clave" con ⚠️:
-- "reportarás al CTO", "serás el primero en datos", "construir desde cero"
-- Lista de responsabilidades muy heterogénea
-- "buscamos autonomía e iniciativa", "entorno dinámico"
-- Stack caótico o proyecto heredado sin documentar
+═══ CRITERIOS DE PUNTUACIÓN (agnósticos al eje) ═══
+Los ejes (principal, climate_tech, industrial, geoespacial) compiten en igualdad. El eje "otros" se penaliza por falta de fit narrativo.
 
-Para "skills": extrae TODOS los skills técnicos mencionados en la oferta
-(lenguajes, librerías, frameworks, cloud, metodologías, herramientas).
-Usa nombres canónicos: "Python", "SQL", "AWS", "scikit-learn", "TensorFlow",
-"Docker", "Kubernetes", "Airflow", "MLflow", "PySpark", "LLMs", "RAG",
-"series temporales", "forecasting", "anomaly detection", "ETL", etc.
+{bandas_text}
+
+═══ PENALIZACIONES (sobre puntuación base) ═══
+{penalizaciones_text}
+
+═══ NO PENALIZAR ═══
+{no_penalizar_text}
+
+═══ CRITERIOS DE DESCARTE (encaja=false) ═══
+{criterios_descarte_text}
+
+Sé preciso: el usuario tiene experiencia industrial real con Python en producción,
+pero puede que sin título formal de "Data Scientist". No infles la puntuación por
+afinidad de empresa si el rol no encaja con su nivel actual. Tampoco la desinfles
+por geografía o idioma si el rol es técnicamente compatible y remoto real.
+
+═══ SEÑALES DE ALERTA en "punto_clave" con ⚠️ ═══
+{senales_alerta_text}
+
+═══ SKILLS ═══
+Extrae TODOS los skills técnicos mencionados en la oferta (lenguajes, librerías, frameworks,
+cloud, metodologías, herramientas). USA NOMBRES CANÓNICOS EN INGLÉS para máxima estandarización:
+{skills_canonicos}
 Máximo 20 skills por oferta."""
 
     try:
+        modelo = CONFIG.get("configuracion_general", {}).get("modelo_ia", "claude-haiku-4-5-20251001")
         client = anthropic.Anthropic(api_key=api_key)
         response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=500,
+            model=modelo,
+            max_tokens=600,
             messages=[{"role": "user", "content": prompt}]
         )
         text = response.content[0].text.strip()
         json_match = re.search(r'\{.*\}', text, re.DOTALL)
         if json_match:
             result = json.loads(json_match.group())
-            if "skills" not in result:
-                result["skills"] = []
+            result.setdefault("skills", [])
+            result.setdefault("eje", "otros")
             return result
     except Exception as e:
         print(f"  ⚠️  Error en Claude: {e}")
@@ -219,14 +358,19 @@ Máximo 20 skills por oferta."""
 # ─────────────────────────────────────────────
 
 def acumular_skills(ofertas: list[dict]) -> dict:
-    """Extrae skills de las ofertas analizadas y los acumula en skills_tracker.json."""
+    """Extrae skills de las ofertas analizadas y los acumula en skills_tracker.json.
 
+    Cada skill se canonicaliza antes de contarse: aliases y variantes de
+    capitalización colapsan a la clave canónica de habilidades.yaml.
+    Skills no reconocidos se mantienen con su grafía original para inspección manual.
+    """
     skills_semana: dict[str, int] = {}
     for job in ofertas:
         for skill in job.get("ia_analysis", {}).get("skills", []):
-            skill = skill.strip()
-            if skill:
-                skills_semana[skill] = skills_semana.get(skill, 0) + 1
+            if not skill or not skill.strip():
+                continue
+            canonical = _canonical_name(skill)
+            skills_semana[canonical] = skills_semana.get(canonical, 0) + 1
 
     if SKILLS_TRACKER_PATH.exists():
         with open(SKILLS_TRACKER_PATH, "r", encoding="utf-8") as f:
@@ -251,18 +395,39 @@ def acumular_skills(ofertas: list[dict]) -> dict:
     return skills_semana
 
 
+def _canonical_name(skill: str) -> str:
+    """Devuelve el nombre canónico de un skill o el original si no hay match.
+
+    Busca contra la clave canónica y todos sus aliases. Case-insensitive.
+    """
+    s = skill.strip()
+    s_lower = s.lower()
+    for canonical, info in CONFIG["skills"].items():
+        if canonical.lower() == s_lower:
+            return canonical
+        if s_lower in info.get("aliases", []):
+            return canonical
+    return s
+
+
+def _lookup_skill_level(skill: str) -> str:
+    """Busca un skill en habilidades.yaml y devuelve su nivel.
+
+    Match case-insensitive. Devuelve 'no' si no se encuentra.
+    """
+    s = skill.strip().lower()
+    for canonical, info in CONFIG["skills"].items():
+        if canonical.lower() == s:
+            return info["level"]
+        if s in info.get("aliases", []):
+            return info["level"]
+    return "no"
+
+
 def top_skills_semana(skills_semana: dict, n: int = 15) -> list[tuple]:
     """Devuelve los N skills más frecuentes de la semana con estado del gap."""
     sorted_skills = sorted(skills_semana.items(), key=lambda x: x[1], reverse=True)[:n]
-    result = []
-    for skill, count in sorted_skills:
-        estado = "no"
-        for k, v in MY_SKILLS.items():
-            if k.lower() == skill.lower():
-                estado = v
-                break
-        result.append((skill, count, estado))
-    return result
+    return [(skill, count, _lookup_skill_level(skill)) for skill, count in sorted_skills]
 
 
 # ─────────────────────────────────────────────
@@ -270,6 +435,7 @@ def top_skills_semana(skills_semana: dict, n: int = 15) -> list[tuple]:
 # ─────────────────────────────────────────────
 
 def generar_seccion_skills(skills_semana: dict) -> str:
+    """Genera la sección de skills para el email."""
     if not skills_semana:
         return ""
 
@@ -319,7 +485,7 @@ def generar_seccion_skills(skills_semana: dict) -> str:
     </table>
     <div style="margin-top:12px;font-size:11px;color:#aaa;">
       ✅ Consolidado · 🔄 En curso · ❌ Pendiente &nbsp;|&nbsp;
-      Actualiza mis_skills en config.yaml al avanzar en tu roadmap
+      Actualiza tus niveles en habilidades.yaml al avanzar en el roadmap
     </div>
   </div>"""
 
@@ -332,7 +498,20 @@ def generar_email_html(ofertas: list[dict], skills_semana: dict) -> str:
         x.get("ia_analysis", {}).get("puntuacion", 5)
     ), reverse=True)
 
-    roles_buscados = ", ".join(q for q, _ in SEARCH_QUERIES[:5])
+    # Fuentes activas para mostrar en el email
+    plataformas = CONFIG.get("plataformas", {})
+    fuentes_activas = []
+    if plataformas.get("linkedin", True):    fuentes_activas.append("LinkedIn")
+    if plataformas.get("indeed", True):      fuentes_activas.append("Indeed")
+    if plataformas.get("climatebase", True): fuentes_activas.append("Climatebase")
+    fuentes_label = " + ".join(fuentes_activas) if fuentes_activas else "Ninguna"
+
+    # Términos de búsqueda para el pie del email
+    terminos = list(dict.fromkeys(
+        q[0] if isinstance(q, (list, tuple)) else q
+        for q in CONFIG.get("busquedas_linkedin_indeed", [])
+    ))[:6]
+    terminos_label = " · ".join(terminos)
 
     html = f"""<!DOCTYPE html>
 <html lang="es">
@@ -380,8 +559,8 @@ def generar_email_html(ofertas: list[dict], skills_semana: dict) -> str:
     <p>{fecha} &nbsp;·&nbsp; {n} oferta{'s' if n != 1 else ''} relevante{'s' if n != 1 else ''}</p>
   </div>
   <div class="summary">
-    Fuentes: LinkedIn + Indeed &nbsp;·&nbsp;
-    Filtrado: {'✅ Claude Haiku' if CLAUDE_AVAILABLE else '⚠️ Sin IA'} &nbsp;·&nbsp;
+    Fuentes: {fuentes_label} &nbsp;·&nbsp;
+    Filtrado: {'✅ Claude' if CLAUDE_AVAILABLE else '⚠️ Sin IA'} &nbsp;·&nbsp;
     🎯 = empresa objetivo
   </div>
 """
@@ -390,7 +569,7 @@ def generar_email_html(ofertas: list[dict], skills_semana: dict) -> str:
         html += """  <div class="empty">
     <p style="font-size:36px">🔎</p>
     <p>Esta semana no hay ofertas que encajen con tu perfil.</p>
-    <p style="font-size:13px">Sigue con tu plan. El momento llegará.</p>
+    <p style="font-size:13px">Sigue con los cursos y el proyecto estrella. El momento llegará.</p>
   </div>
 """
     else:
@@ -428,7 +607,7 @@ def generar_email_html(ofertas: list[dict], skills_semana: dict) -> str:
 
     html += f"""  <div class="footer">
     Vigía de Empleo · generado automáticamente cada lunes<br>
-    Buscando: {roles_buscados}
+    Buscando: {terminos_label}
   </div>
 </div>
 </body></html>"""
@@ -472,11 +651,92 @@ def enviar_email(html_content: str, n_ofertas: int):
 # MAIN
 # ─────────────────────────────────────────────
 
+def muestreo_proporcional(ofertas: list[dict], cap: int = 300) -> list[dict]:
+    """Selecciona hasta `cap` ofertas con muestreo proporcional al volumen de
+    cada fuente. Garantiza que ninguna fuente domine completamente el batch.
+
+    Estrategia:
+    - Si len(ofertas) <= cap: devuelve todas, sin muestreo.
+    - Si no: agrupa por 'source', asigna cuota proporcional, redondea preservando
+      el total = cap. Cada fuente con ≥1 oferta obtiene mínimo 1 slot.
+    - Dentro de cada fuente preserva el orden original (queries más relevantes
+      primero, asumiendo que están al inicio de las listas en config.yaml).
+    """
+    if len(ofertas) <= cap:
+        return ofertas
+
+    grupos: dict[str, list[dict]] = {}
+    for job in ofertas:
+        src = job.get("source", "unknown")
+        grupos.setdefault(src, []).append(job)
+
+    total = len(ofertas)
+    n_fuentes = len(grupos)
+
+    cuotas: dict[str, int] = {}
+    for src, items in grupos.items():
+        proporcional = round(cap * len(items) / total)
+        cuotas[src] = max(1, proporcional)
+
+    diff = cap - sum(cuotas.values())
+    if diff != 0:
+        fuentes_por_volumen = sorted(grupos.keys(), key=lambda s: -len(grupos[s]))
+        i = 0
+        while diff != 0:
+            src = fuentes_por_volumen[i % n_fuentes]
+            if diff > 0 and cuotas[src] < len(grupos[src]):
+                cuotas[src] += 1
+                diff -= 1
+            elif diff < 0 and cuotas[src] > 1:
+                cuotas[src] -= 1
+                diff += 1
+            i += 1
+            if i > cap * 2:
+                break
+
+    seleccion = []
+    for src, n in cuotas.items():
+        seleccion.extend(grupos[src][:n])
+
+    print(f"📐 Muestreo proporcional (cap={cap}, total={total}):")
+    for src, n in cuotas.items():
+        print(f"   · {src}: {n} de {len(grupos[src])} disponibles")
+
+    return seleccion
+
+
+def volcar_diagnostico(ofertas: list[dict], path: str = "diagnostico_corrida.csv"):
+    """Vuelca TODAS las ofertas analizadas (incluidas las <puntuacion_minima) a CSV."""
+    import csv
+    filas = sorted(ofertas, key=lambda j: (j.get("source", ""),
+                   -j.get("ia_analysis", {}).get("puntuacion", 0)))
+    puntuacion_minima = CONFIG.get("configuracion_general", {}).get("puntuacion_minima", 4)
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["source", "empresa", "titulo", "ubicacion", "len_desc",
+                    "score", "supero_corte", "eje", "objetivo", "razon"])
+        for j in filas:
+            ia = j.get("ia_analysis", {})
+            score = ia.get("puntuacion", 0)
+            w.writerow([
+                j.get("source", ""), j.get("company", ""), j.get("title", "")[:60],
+                j.get("location", ""), len(j.get("description", "") or ""), score,
+                "si" if score >= puntuacion_minima else "NO", ia.get("eje", ""),
+                "objetivo" if j.get("es_objetivo") else "",
+                (ia.get("razon", "") or "")[:120],
+            ])
+    print(f"🔬 Diagnóstico volcado: {path} ({len(ofertas)} ofertas)")
+
+
 def main():
     print("=" * 60)
     print("🔍 VIGÍA DE EMPLEO – BÚSQUEDA SEMANAL")
     print(f"📅 {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("=" * 60)
+
+    cfg_general = CONFIG.get("configuracion_general", {})
+    puntuacion_minima = cfg_general.get("puntuacion_minima", 4)
+    max_ofertas = cfg_general.get("max_ofertas", 300)
 
     ofertas = buscar_ofertas()
 
@@ -487,19 +747,23 @@ def main():
     ofertas = deduplicar(ofertas)
     print(f"🔄 Únicas: {len(ofertas)}")
 
+    ofertas = muestreo_proporcional(ofertas, cap=max_ofertas)
+
     print(f"\n🤖 Analizando con Claude...")
     ofertas_finales = []
-    for i, job in enumerate(ofertas[:30]):
-        print(f"  [{i+1}/{min(len(ofertas),30)}] {job['company']} · {job['title'][:45]}...")
+    for i, job in enumerate(ofertas):
+        print(f"  [{i+1}/{len(ofertas)}] {job['company']} · {job['title'][:45]}...")
         analysis = analizar_con_claude(job)
         job["ia_analysis"] = analysis
-        if analysis.get("puntuacion", 5) >= 4:
+        if analysis.get("puntuacion", 5) >= puntuacion_minima:
             ofertas_finales.append(job)
         time.sleep(1.5)
 
     print(f"\n✅ Ofertas finales: {len(ofertas_finales)}")
+    volcar_diagnostico(ofertas)
 
     skills_semana = acumular_skills(ofertas_finales)
+
     html = generar_email_html(ofertas_finales, skills_semana)
     enviar_email(html, len(ofertas_finales))
     print("🎯 Proceso completado.")

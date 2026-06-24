@@ -1,0 +1,285 @@
+# ══════════════════════════════════════════════════════════════
+# HABILIDADES — Vigía de Empleo
+# ══════════════════════════════════════════════════════════════
+#
+# Este archivo define tus skills técnicas y tu nivel actual.
+# El sistema las usa para:
+#   1. Identificar qué skills pide el mercado cada semana.
+#   2. Mostrar en el email y el dashboard tu estado de cada una.
+#
+# CÓMO EDITAR:
+#   - nivel: consolidado  → ya lo dominas (verde ✅)
+#   - nivel: aprendiendo  → en proceso (naranja 🔄)
+#   - nivel: pendiente    → aún no lo tienes (rojo ❌)
+#
+#   - aliases: otros nombres con los que puede aparecer en las ofertas
+#     (en inglés, en español, abreviaturas...). No distingue mayúsculas.
+#
+# AÑADIR UNA SKILL NUEVA:
+#   - nombre: Mi Nueva Skill
+#     nivel: pendiente
+#     aliases: [mi nueva skill, otra forma de escribirlo]
+#
+# ══════════════════════════════════════════════════════════════
+
+habilidades:
+
+  # ── Lenguajes de programación ──────────────────────────────
+  - nombre: Python
+    nivel: consolidado        # ← cambia esto según tu nivel real
+    aliases: [python]
+
+  - nombre: SQL
+    nivel: aprendiendo
+    aliases: [sql]
+
+  - nombre: R
+    nivel: pendiente
+    aliases: [r]
+
+  - nombre: Scala
+    nivel: pendiente
+    aliases: [scala]
+
+  - nombre: Java
+    nivel: pendiente
+    aliases: [java]
+
+  # ── Librerías de Data Science ───────────────────────────────
+  - nombre: pandas
+    nivel: pendiente
+    aliases: [pandas]
+
+  - nombre: NumPy
+    nivel: pendiente
+    aliases: [numpy]
+
+  - nombre: scikit-learn
+    nivel: pendiente
+    aliases: [scikit-learn, sklearn]
+
+  - nombre: matplotlib
+    nivel: pendiente
+    aliases: [matplotlib]
+
+  - nombre: Plotly
+    nivel: pendiente
+    aliases: [plotly]
+
+  - nombre: seaborn
+    nivel: pendiente
+    aliases: [seaborn]
+
+  - nombre: Streamlit
+    nivel: pendiente
+    aliases: [streamlit]
+
+  # ── Machine Learning / Deep Learning ───────────────────────
+  - nombre: Machine Learning
+    nivel: pendiente
+    aliases: [machine learning, ml, ai/ml, aprendizaje automático]
+
+  - nombre: Deep Learning
+    nivel: pendiente
+    aliases: [deep learning, aprendizaje profundo]
+
+  - nombre: NLP
+    nivel: pendiente
+    aliases: [nlp, natural language processing, procesamiento de lenguaje natural]
+
+  - nombre: Computer Vision
+    nivel: pendiente
+    aliases: [computer vision, image processing, visión por computador]
+
+  - nombre: TensorFlow
+    nivel: pendiente
+    aliases: [tensorflow]
+
+  - nombre: PyTorch
+    nivel: pendiente
+    aliases: [pytorch]
+
+  - nombre: XGBoost
+    nivel: pendiente
+    aliases: [xgboost]
+
+  - nombre: LightGBM
+    nivel: pendiente
+    aliases: [lightgbm]
+
+  - nombre: Time Series
+    nivel: pendiente
+    aliases: [time series, time series analysis, series temporales]
+
+  - nombre: Forecasting
+    nivel: pendiente
+    aliases: [forecasting, pronóstico, predicción demanda]
+
+  - nombre: Anomaly Detection
+    nivel: pendiente
+    aliases: [anomaly detection, detección de anomalías]
+
+  - nombre: Predictive Analytics
+    nivel: pendiente
+    aliases: [predictive analytics, predictive modeling, predictive modelling, modelado predictivo]
+
+  - nombre: Signal Processing
+    nivel: pendiente
+    aliases: [signal processing, procesamiento de señales]
+
+  - nombre: EDA
+    nivel: pendiente
+    aliases: [eda, exploratory data analysis, análisis exploratorio]
+
+  # ── Cloud ───────────────────────────────────────────────────
+  - nombre: AWS
+    nivel: pendiente
+    aliases: [aws, amazon web services]
+
+  - nombre: Azure
+    nivel: pendiente
+    aliases: [azure]
+
+  - nombre: GCP
+    nivel: pendiente
+    aliases: [gcp, google cloud, google cloud platform]
+
+  - nombre: Docker
+    nivel: pendiente
+    aliases: [docker]
+
+  - nombre: Kubernetes
+    nivel: pendiente
+    aliases: [kubernetes, k8s]
+
+  # ── DevOps / MLOps ──────────────────────────────────────────
+  - nombre: CI/CD
+    nivel: pendiente
+    aliases: [ci/cd, cicd, integración continua]
+
+  - nombre: GitHub Actions
+    nivel: consolidado
+    aliases: [github actions]
+
+  - nombre: MLflow
+    nivel: pendiente
+    aliases: [mlflow]
+
+  - nombre: Airflow
+    nivel: pendiente
+    aliases: [airflow, apache airflow]
+
+  - nombre: MLOps
+    nivel: pendiente
+    aliases: [mlops]
+
+  - nombre: Git
+    nivel: consolidado
+    aliases: [git]
+
+  # ── Data Engineering ────────────────────────────────────────
+  - nombre: ETL
+    nivel: pendiente
+    aliases: [etl, elt, data pipelines, data integration, pipelines de datos]
+
+  - nombre: PySpark
+    nivel: pendiente
+    aliases: [pyspark]
+
+  - nombre: Spark
+    nivel: pendiente
+    aliases: [spark, apache spark]
+
+  - nombre: Kafka
+    nivel: pendiente
+    aliases: [kafka]
+
+  - nombre: dbt
+    nivel: pendiente
+    aliases: [dbt]
+
+  - nombre: Redshift
+    nivel: pendiente
+    aliases: [redshift]
+
+  - nombre: BigQuery
+    nivel: pendiente
+    aliases: [bigquery]
+
+  - nombre: Databricks
+    nivel: pendiente
+    aliases: [databricks]
+
+  - nombre: Data Analysis
+    nivel: pendiente
+    aliases: [data analysis, análisis de datos]
+
+  - nombre: APIs
+    nivel: pendiente
+    aliases: [apis, api, rest api, rest apis]
+
+  - nombre: PowerBI
+    nivel: pendiente
+    aliases: [powerbi, power bi]
+
+  # ── IA Generativa ────────────────────────────────────────────
+  - nombre: LLMs
+    nivel: pendiente
+    aliases: [llms, llm, large language models]
+
+  - nombre: RAG
+    nivel: pendiente
+    aliases: [rag, retrieval augmented generation]
+
+  - nombre: LangChain
+    nivel: pendiente
+    aliases: [langchain]
+
+  - nombre: Prompt Engineering
+    nivel: pendiente
+    aliases: [prompt engineering, ingeniería de prompts]
+
+  - nombre: API Integration
+    nivel: pendiente
+    aliases: [api integration, integración de apis]
+
+  - nombre: Agentic AI
+    nivel: pendiente
+    aliases: [agentic ai, agentic systems, ai agents, sistemas agénticos]
+
+  # ── Dominio energético / industrial / climate ────────────────
+  - nombre: Energy
+    nivel: pendiente
+    aliases: [energy, energy sector, energía, sector energético]
+
+  - nombre: Renewable Energy
+    nivel: pendiente
+    aliases: [renewable energy, renewables, renovables, energías renovables]
+
+  - nombre: Smart Grid
+    nivel: pendiente
+    aliases: [smart grid, power grid, red eléctrica inteligente]
+
+  - nombre: Energy Management Systems
+    nivel: pendiente
+    aliases: [energy management systems, ems, sistemas de gestión energética]
+
+  - nombre: IoT
+    nivel: pendiente
+    aliases: [iot, internet of things]
+
+  - nombre: Sensors
+    nivel: pendiente
+    aliases: [sensors, sensor data, sensores, datos de sensores]
+
+  - nombre: Predictive Maintenance
+    nivel: pendiente
+    aliases: [predictive maintenance, mantenimiento predictivo]
+
+  - nombre: Climate Risk
+    nivel: pendiente
+    aliases: [climate risk, climate analytics, riesgo climático]
+
+  - nombre: Geospatial
+    nivel: pendiente
+    aliases: [geospatial, gis, remote sensing, geoespacial, teledetección]

@@ -1,115 +1,200 @@
-# ─────────────────────────────────────────────────────────────────
-# VIGÍA DE EMPLEO — Configuración personal
-# Edita este archivo. No toques job_alert.py salvo para ajustes
-# avanzados de lógica de puntuación.
-# ─────────────────────────────────────────────────────────────────
-
-# ── Tu perfil ────────────────────────────────────────────────────
-# Claude usa este texto para evaluar si cada oferta encaja contigo.
-# Sé concreto: años de experiencia, stack técnico, tipo de empresa,
-# restricciones de ubicación, idiomas.
-
-perfil: |
-  Ingeniero/a de datos con X años de experiencia en [sector].
-  
-  Skills técnicas consolidadas:
-  - Python (pandas, NumPy) — uso diario en producción
-  - [añade tus skills reales]
-  
-  Formación completada:
-  - [certificados o títulos relevantes]
-  
-  Portfolio:
-  - [proyectos públicos con impacto medible]
-  
-  Objetivo: [rol objetivo] en [tipo de empresa].
-  Acepta híbrido o remoto. Ubicación: [ciudad].
-  Idiomas: [idiomas y nivel].
+# ══════════════════════════════════════════════════════════════
+# CONFIGURACIÓN — Vigía de Empleo
+# ══════════════════════════════════════════════════════════════
+#
+# Este archivo controla cómo funciona el buscador de empleo.
+# Edítalo según tus preferencias. No necesitas tocar el código.
+#
+# SINTAXIS BÁSICA YAML:
+#   clave: valor              → ajuste simple
+#   - elemento               → un ítem de una lista
+#   # texto                  → comentario (el programa lo ignora)
+#   true / false             → activado / desactivado
+#
+# ══════════════════════════════════════════════════════════════
 
 
-# ── Búsquedas ────────────────────────────────────────────────────
-# Lista de pares [query, location]. Añade o quita según tu objetivo.
-# "Spain" para búsquedas en inglés, "España" para español.
+# ──────────────────────────────────────────────────────────────
+# 1. PLATAFORMAS
+# Activa o desactiva cada fuente de ofertas.
+# ──────────────────────────────────────────────────────────────
 
-busquedas:
+plataformas:
+  linkedin: true       # Busca en LinkedIn
+  indeed: true         # Busca en Indeed
+  climatebase: true    # Busca en Climatebase (ofertas de clima y sostenibilidad, mayormente en inglés y remotas)
+
+
+# ──────────────────────────────────────────────────────────────
+# 2. CONFIGURACIÓN GENERAL
+# ──────────────────────────────────────────────────────────────
+
+configuracion_general:
+
+  # Puntuación mínima (1-10) para que una oferta aparezca en el email.
+  # Sube el número para recibir menos ofertas pero más ajustadas.
+  # Bájalo para ver más aunque encajen menos.
+  puntuacion_minima: 4
+
+  # Máximo de ofertas que se analizan con IA por ejecución.
+  # Subir este número aumenta el coste de la API de Claude.
+  max_ofertas: 300
+
+  # Modelo de IA para analizar las ofertas.
+  # claude-haiku-4-5-20251001  → más rápido y barato (recomendado)
+  # claude-sonnet-4-6          → más preciso pero más caro
+  modelo_ia: "claude-haiku-4-5-20251001"
+
+
+# ──────────────────────────────────────────────────────────────
+# 3. BÚSQUEDAS EN LINKEDIN E INDEED
+# Formato: ["término de búsqueda", "país o ciudad"]
+# Añade o quita líneas según lo que quieras buscar.
+# ──────────────────────────────────────────────────────────────
+
+busquedas_linkedin_indeed:
+  # ← Reemplaza estos ejemplos con tus propias búsquedas
   - ["Data Scientist", "Spain"]
   - ["Data Analyst", "Spain"]
   - ["Machine Learning Engineer", "Spain"]
   - ["Analytics Engineer", "Spain"]
-  - ["Python Developer data", "Spain"]
-  # Añade búsquedas específicas de tu sector:
-  # - ["Data Scientist energy", "Spain"]
-  # - ["Analista de datos energía", "España"]
+  - ["Data Engineer", "Spain"]
+  - ["ML Engineer", "Spain"]
+  - ["Científico de datos", "España"]
+  - ["Analista de datos", "España"]
 
 
-# ── Empresas objetivo ────────────────────────────────────────────
-# Aparecen marcadas con 🎯 en el email pero NO se filtran.
-# Todas las ofertas relevantes llegan; estas van destacadas.
-# Escribe en minúsculas; la comparación es case-insensitive.
+# ──────────────────────────────────────────────────────────────
+# 4. BÚSQUEDAS EN CLIMATEBASE
+# Solo en inglés (Climatebase indexa principalmente en inglés).
+# El filtro de "solo remoto" se aplica automáticamente.
+# ──────────────────────────────────────────────────────────────
+
+busquedas_climatebase:
+  # ← Reemplaza estos ejemplos con tus propias búsquedas
+  - "data scientist"
+  - "data analyst"
+  - "machine learning engineer"
+  - "climate data scientist"
+  - "sustainability data analyst"
+
+
+# ──────────────────────────────────────────────────────────────
+# 5. EMPRESAS DE INTERÉS
+# Las ofertas de estas empresas aparecen marcadas con 🎯 en el email.
+# No se descartan otras ofertas — es solo un marcador visual.
+# Escribe los nombres en minúsculas.
+# ──────────────────────────────────────────────────────────────
 
 empresas_objetivo:
-  # Ejemplos — reemplaza con las tuyas:
-  - "nombre empresa 1"
-  - "nombre empresa 2"
-  - "nombre empresa 3"
+
+  # ← Reemplaza estos ejemplos con las empresas que te interesen
+  tier_1_maxima_prioridad:
+    - google
+    - microsoft
+    - amazon
+    - meta
+
+  tier_2_tech_mediana:
+    - stripe
+    - notion
+    - figma
+    - datadog
+
+  tier_3_consultoria_y_otros:
+    - mckinsey
+    - deloitte
+    - accenture
+    - capgemini
 
 
-# ── Palabras clave de exclusión ───────────────────────────────────
-# Ofertas que contengan estas palabras en título o descripción
-# se descartan antes del análisis con IA (ahorra tokens y ruido).
+# ──────────────────────────────────────────────────────────────
+# 6. FILTROS AUTOMÁTICOS
+# Ofertas que contengan estas palabras se descartan sin consultar la IA.
+# Útil para excluir prácticas, becas, puestos sin experiencia, etc.
+# ──────────────────────────────────────────────────────────────
 
-exclusiones:
-  - "becario"
-  - "beca"
-  - "prácticas"
-  - "internship"
-  - "intern"
-  - "sin experiencia"
-  - "recién titulado"
-  - "recien titulado"
-  - "student"
-  - "estudiante"
-  - "trainee"
+palabras_excluir:
+  - becario
+  - beca
+  - prácticas
+  - internship
+  - intern
+  - sin experiencia
+  - recién titulado
+  - recien titulado
+  - student
+  - estudiante
+  - trainee
 
 
-# ── Tu nivel actual de skills ────────────────────────────────────
-# Usado para el gap analysis en el email y el skills dashboard.
-# "yes"      → consolidado (lo pones en el CV sin problema)
-# "learning" → en curso (estás aprendiéndolo ahora mismo)
-# "no"       → pendiente (lo ves en ofertas pero aún no lo tienes)
-# Actualiza esta lista a medida que avanzas.
+# ──────────────────────────────────────────────────────────────
+# 7. CRITERIOS DE LA IA
+# Esta sección define cómo Claude evalúa y puntúa cada oferta.
+# Edítala si quieres cambiar qué tipo de roles se priorizan,
+# qué penalizaciones aplican a tu situación o qué señales de alerta vigilar.
+# ──────────────────────────────────────────────────────────────
 
-mis_skills:
-  # Lenguajes
-  Python: "yes"
-  SQL: "no"
-  R: "no"
-  Scala: "no"
-  # Librerías DS
-  pandas: "yes"
-  NumPy: "yes"
-  "scikit-learn": "no"
-  matplotlib: "yes"
-  # ML/DL
-  TensorFlow: "no"
-  PyTorch: "no"
-  XGBoost: "no"
-  "series temporales": "no"
-  forecasting: "no"
-  "anomaly detection": "no"
-  # Cloud/MLOps
-  AWS: "no"
-  Azure: "no"
-  GCP: "no"
-  Docker: "no"
-  "GitHub Actions": "no"
-  MLflow: "no"
-  Airflow: "no"
-  # Datos
-  ETL: "no"
-  PySpark: "no"
-  dbt: "no"
-  # IA generativa
-  LLMs: "no"
-  RAG: "no"
-  "prompt engineering": "no"
+criterios_ia:
+
+  # Ejes sectoriales — Claude clasifica cada oferta en uno de estos ejes.
+  # Puedes cambiar las descripciones o añadir nuevos ejes.
+  ejes:
+    principal: >
+      energía / utilities / red eléctrica / renovables / O&M de plantas.
+      Empresas tipo Iberdrola, REE/Redeia, Endesa, Acciona, Naturgy, Siemens Energy,
+      Schneider Electric, Vestas, ABB, Statkraft, EDP, Holaluz, RatedPower.
+    climate_tech: >
+      MRV climática, carbon accounting, climate analytics corporativos, energy intelligence
+      platforms, climate risk físico. Empresas tipo Pachama, Sylvera, CarbonChain,
+      Jupiter Intelligence, Kpler, ICIS, Wood Mackenzie, reaseguradoras.
+    industrial: >
+      manufacturing analytics, predictive maintenance, IoT industrial, calidad de proceso,
+      sensores industriales. Empresas tipo Aizon, Augury, Uptake, C3.ai (operations).
+    geoespacial: >
+      earth observation, remote sensing, GIS, análisis satelital.
+      Empresas tipo GMV, Satellogic, Planet Labs, Hisdesat.
+    otros: >
+      data/ML genérico sin dominio claro, consultoría delivery,
+      sectores fuera de los anteriores.
+
+  # Bandas de puntuación — define qué puntúa cada nota (1-10).
+  # Adapta las descripciones a tu perfil y lo que buscas.
+  bandas_puntuacion: |
+    - 8-10: rol DS/DA con uso de Python + (ML o series temporales o anomaly detection) + dominio técnico relevante para el usuario. Experiencia requerida acorde al perfil. Encaja sin esfuerzo.
+    - 6-7: data/ML en industria o consultoría técnica. Eje válido pero stack o seniority algo desplazado.
+    - 4-5: datos o ingeniería con encaje técnico pero sin componente sectorial relevante, o rol principalmente BI/reporting.
+    - <4: sin relación con datos o ingeniería técnica.
+
+  # Penalizaciones — se restan de la puntuación base.
+  # Adapta o elimina las que no apliquen a tu situación.
+  penalizaciones:
+    - "Rol es principalmente MLOps/plataforma/infraestructura ML (no usuario de modelos): -2"
+    - "Requiere >5 años de experiencia específica en DS/ML puro: -2"
+    - "Requiere stack DevOps pesado (Kubernetes, Terraform, C#/Java/Scala/Go) como núcleo del puesto: -1"
+    - "Ubicación presencial obligatoria en ciudad donde el usuario no puede/quiere estar: -2"
+    - "Ubicación en UE o UK sin mención de 'remote', 'EU remote' o 'fully remote': -1"
+    - "Ubicación fuera de UE/UK sin mención explícita de 'global remote', 'fully remote worldwide' o equivalente: -2"
+
+  # Qué NO penalizar — instrucciones explícitas para que Claude no reste puntos por estos motivos.
+  no_penalizar:
+    - "Idioma de la oferta: las ofertas en inglés son tan válidas como las de español."
+    - "Eje no-principal: una oferta puede sacar 8-9 en cualquier eje si encaja técnicamente."
+    - "Empresa internacional sin oficina local: si el rol es remoto real, no penalices."
+    - "Ofertas climate tech de UK/DE/FR que sean remotas pan-europeas reales aunque la 'location' diga una ciudad concreta."
+
+  # Criterios de descarte — estas condiciones marcan la oferta como no apta (encaja=false).
+  criterios_descarte:
+    - "Más de 6 años de experiencia exigida en DS/ML puro"
+    - "Beca, prácticas, trainee o junior sin experiencia previa"
+    - "Relocalización obligatoria sin opción remota"
+    - "100% presencial en ubicación que el usuario no acepta"
+    - "Ubicación fuera de UE/UK que no mencione explícitamente 'remote anywhere', 'global remote' o equivalente"
+
+  # Señales de alerta — Claude las incluye en el 'punto_clave' con ⚠️ cuando las detecta.
+  senales_alerta:
+    - "'reportarás al CTO', 'serás el primero en datos', 'construir desde cero'"
+    - "Lista de responsabilidades muy heterogénea (DS + DevOps + Frontend + ...)"
+    - "'buscamos autonomía e iniciativa', 'entorno dinámico'"
+    - "Stack caótico o proyecto heredado sin metodología"
+    - "Rol único de DS en la empresa (sin equipo de datos existente)"

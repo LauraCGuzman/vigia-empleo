@@ -1,10 +1,10 @@
 name: 🔍 Vigía de Empleo Semanal
 
 on:
-  #schedule:
+  schedule:
     # Todos los lunes a las 08:00 CET (07:00 UTC)
-    #- cron: '0 7 * * 1'
-  
+    - cron: '0 3 * * 1'
+
   # Permite lanzarlo manualmente desde GitHub para probar
   workflow_dispatch:
 
@@ -23,7 +23,18 @@ jobs:
           cache: 'pip'
 
       - name: 📦 Instalar dependencias
-        run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: ✅ Validar dependencias críticas
+        # Falla rápido si jobspy o anthropic no se instalaron correctamente.
+        # Sin esto, el workflow corre en modo zombie (sin scoring real) y manda
+        # un email con ofertas mal evaluadas.
+        run: |
+          python -c "import jobspy; print(f'JobSpy {jobspy.__version__ if hasattr(jobspy, \"__version__\") else \"OK\"}')"
+          python -c "import anthropic; print(f'Anthropic {anthropic.__version__}')"
+          python -c "import requests; print(f'Requests {requests.__version__}')"
 
       - name: 🔍 Ejecutar búsqueda de empleo
         env:
@@ -34,12 +45,17 @@ jobs:
         run: python job_alert.py
 
       - name: 💾 Commit skills tracker actualizado
+        # Solo commitea si hay cambios reales. Si no, el step pasa sin error.
         run: |
           git config user.name "vigia-bot"
           git config user.email "actions@github.com"
           git add skills_tracker.json
-          git diff --staged --quiet || git commit -m "📊 skills tracker $(date +%Y-%m-%d)"
-          git push
+          if git diff --staged --quiet; then
+            echo "ℹ️  Sin cambios en skills_tracker.json — no se hace commit"
+          else
+            git commit -m "📊 skills tracker $(date +%Y-%m-%d)"
+            git push
+          fi
 
       - name: 📄 Guardar preview del email (artefacto)
         if: always()

@@ -1,6 +1,17 @@
+﻿# Vigía de Empleo — dependencias de producción
+# Versiones fijadas con `>=` para flexibilidad pero piso mínimo conocido.
+
+# Núcleo: scraping LinkedIn/Indeed
+python-jobspy>=1.1.0
+
+# API de Claude para scoring de ofertas
+anthropic>=0.30.0
+
+# HTTP client (usado por scraper Climatebase via API Algolia)
 requests>=2.31.0
-beautifulsoup4>=4.12.0
-python-jobspy>=1.1.4
-anthropic>=0.40.0
-lxml>=4.9.0
-pyyaml>=6.0.0
+
+# pandas es dependencia transitiva de python-jobspy pero la dejamos explícita
+pandas>=2.0.0
+
+# Lectura de archivos de configuración YAML
+pyyaml>=6.0
