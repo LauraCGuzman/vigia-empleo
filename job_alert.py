@@ -729,28 +729,6 @@ def muestreo_proporcional(ofertas: list[dict], cap: int = 300) -> list[dict]:
     return seleccion
 
 
-def volcar_diagnostico(ofertas: list[dict], path: str = "diagnostico_corrida.csv"):
-    """Vuelca TODAS las ofertas analizadas (incluidas las <puntuacion_minima) a CSV."""
-    import csv
-    filas = sorted(ofertas, key=lambda j: (j.get("source", ""),
-                   -j.get("ia_analysis", {}).get("puntuacion", 0)))
-    puntuacion_minima = CONFIG.get("configuracion_general", {}).get("puntuacion_minima", 4)
-    with open(path, "w", encoding="utf-8", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(["source", "empresa", "titulo", "ubicacion", "len_desc",
-                    "score", "supero_corte", "eje", "objetivo", "razon"])
-        for j in filas:
-            ia = j.get("ia_analysis", {})
-            score = ia.get("puntuacion", 0)
-            w.writerow([
-                j.get("source", ""), j.get("company", ""), j.get("title", "")[:60],
-                j.get("location", ""), len(j.get("description", "") or ""), score,
-                "si" if score >= puntuacion_minima else "NO", ia.get("eje", ""),
-                "objetivo" if j.get("es_objetivo") else "",
-                (ia.get("razon", "") or "")[:120],
-            ])
-    print(f"🔬 Diagnóstico volcado: {path} ({len(ofertas)} ofertas)")
-
 
 def main():
     print("=" * 60)
@@ -792,7 +770,6 @@ def main():
                 ofertas_finales.append(job)
 
     print(f"\n✅ Ofertas finales: {len(ofertas_finales)}")
-    volcar_diagnostico(ofertas)
 
     skills_semana = acumular_skills(ofertas_finales)
 
