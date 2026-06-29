@@ -1,9 +1,9 @@
 name: 🔍 Vigía de Empleo Semanal
 
 on:
-  #schedule:
-    # Todos los lunes a las 08:00 CET (07:00 UTC)
-   # - cron: '0 3 * * 1'
+  # schedule:
+  #   # Todos los lunes a las 08:00 CET (07:00 UTC)
+  #   # - cron: '0 3 * * 1'
 
   # Permite lanzarlo manualmente desde GitHub para probar
   workflow_dispatch:
@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: 📥 Checkout del repositorio
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true # Asegura que las credenciales del token se guarden localmente
 
       - name: 🐍 Configurar Python 3.11
         uses: actions/setup-python@v5
@@ -31,9 +33,6 @@ jobs:
           pip install -r requirements.txt
 
       - name: ✅ Validar dependencias críticas
-        # Falla rápido si jobspy o anthropic no se instalaron correctamente.
-        # Sin esto, el workflow corre en modo zombie (sin scoring real) y manda
-        # un email con ofertas mal evaluadas.
         run: |
           python -c "import jobspy; print(f'JobSpy {jobspy.__version__ if hasattr(jobspy, \"__version__\") else \"OK\"}')"
           python -c "import anthropic; print(f'Anthropic {anthropic.__version__}')"
@@ -48,20 +47,33 @@ jobs:
         run: python job_alert.py
 
       - name: 💾 Commit skills tracker actualizado
-        # Solo commitea si hay cambios reales. Si no, el step pasa sin error.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Proporciona el token explícitamente al entorno
         run: |
           git config user.name "vigia-bot"
           git config user.email "actions@github.com"
           git add skills_tracker.json
           if git diff --staged --quiet; then
-            echo "ℹ️  Sin cambios en skills_tracker.json — no se hace commit"
+            echo "ℹ️ Sin cambios en skills_tracker.json — no se hace commit"
           else
             git commit -m "📊 skills tracker $(date +%Y-%m-%d)"
-            git push
+            # Usamos el token directamente para autenticar el push de forma segura frente a errores 403
+            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:${{ github.ref_name }}
           fi
 
-      - name: 📄 Guardar preview del email (artefacto)
+      - name: 📄 Verificar y guardar preview del email (artefacto)
         if: always()
+        run: |
+          # Solo invocamos upload-artifact si el archivo realmente fue generado por el script
+          if [ -f "email_preview.html" ]; then
+            echo "FILE_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "FILE_EXISTS=false" >> $GITHUB_ENV
+            echo "ℹ️ email_preview.html no fue generado en esta corrida."
+          fi
+
+      - name: 📤 Subir artefacto si existe
+        if: always() && env.FILE_EXISTS == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: email-preview-${{ github.run_number }}
