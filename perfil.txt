@@ -41,18 +41,18 @@
 # (delete it and write yours from here / bórralo y escribe el tuyo a partir de aquí):
 # ══════════════════════════════════════════════════════════════
 
-Ingeniero/a de datos con 3 años de experiencia trabajando con Python
-en entornos de producción. He desarrollado pipelines ETL, dashboards
-analíticos y modelos predictivos básicos para el sector retail.
+Analista de datos júnior recién graduado/a en Estadística. He hecho unas
+prácticas de 6 meses en el equipo de datos de una empresa, donde trabajé
+con datos reales: limpieza en Excel y SQL, informes y cuadros de mando.
 
-Tecnologías que uso con soltura: Python (pandas, NumPy, scikit-learn),
-SQL, Git, GitHub Actions. Experiencia inicial con Docker y AWS.
+Tecnologías: SQL y Excel con soltura, Python básico (pandas) en aprendizaje,
+visualización con Power BI y matplotlib. Nociones iniciales de estadística
+y de machine learning por la carrera. Uso Git a nivel básico.
 
-Formación: Grado en Estadística + IBM Data Science Professional Certificate.
-Actualmente estudiando ML Specialization (DeepLearning.ai).
+Formación: Grado en Estadística. Estoy reforzando SQL y Python por mi cuenta
+con cursos online de análisis de datos.
 
-Busco: rol de Data Scientist o Data Analyst en empresa tecnológica o industrial.
-Me interesan especialmente los sectores de energía, manufactura y salud.
-Acepto híbrido o remoto. Ubicación: Madrid. No descarto otras ciudades
-si el rol es muy bueno, pero prefiero no tener que mudarme.
-Idiomas: español nativo, inglés B2.
+Busco: mi primer puesto de Data Analyst / Analista de datos júnior, en
+cualquier sector. Quiero aprender y crecer en un equipo con gente sénior de
+la que aprender. No tengo más experiencia que las prácticas.
+Acepto híbrido o remoto. Ubicación: Madrid. Idiomas: español nativo, inglés B2.

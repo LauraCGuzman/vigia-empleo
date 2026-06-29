@@ -121,6 +121,10 @@ penalizaciones:
   ...
 ```
 
+#### Customise the sector axes
+
+`criterios_ia` → `ejes` groups listings by sector. The axes shipped here (`principal`, `secundario_a`, `secundario_b`) are **examples** — rename them and rewrite their descriptions to match the sectors you target. Keep `otros`: it's the catch-all, intentionally penalised so off-target roles score lower.
+
 ---
 
 ## Initial setup
@@ -191,6 +195,8 @@ python job_alert.py
 ```
 
 Without environment variables configured, the script saves the result as `email_preview.html`.
+
+> **Real-time logs:** in GitHub Actions, Python buffers stdout, so the progress counter may appear in bursts or look frozen even when the run is fine. To see each line live, run `python -u job_alert.py` (or set `PYTHONUNBUFFERED: "1"` under the workflow's `env`).
 
 ---
 
@@ -357,7 +363,7 @@ busquedas_linkedin_indeed:
 ```yaml
 empresas_objetivo:
   tier_1_maxima_prioridad:
-    - iberdrola
+    - google
     - tu empresa favorita    # ← añade aquí
 ```
 
@@ -379,6 +385,10 @@ penalizaciones:
   - "Requiere >5 años de experiencia específica en DS/ML puro: -2"
   ...
 ```
+
+#### Personalizar los ejes sectoriales
+
+`criterios_ia` → `ejes` agrupa las ofertas por sector. Los ejes que vienen de serie (`principal`, `secundario_a`, `secundario_b`) son **ejemplos**: renómbralos y reescribe sus descripciones según los sectores que te interesen. Conserva `otros`: es el cajón de sastre y se penaliza a propósito para que las ofertas fuera de foco puntúen más bajo.
 
 ---
 
@@ -450,6 +460,8 @@ python job_alert.py
 ```
 
 Sin variables de entorno configuradas, el script guarda el resultado como `email_preview.html`.
+
+> **Logs en tiempo real:** en GitHub Actions, Python almacena la salida en un búfer, así que el contador de progreso puede aparecer a ráfagas o parecer congelado aunque la ejecución vaya bien. Para ver cada línea al instante, ejecuta `python -u job_alert.py` (o pon `PYTHONUNBUFFERED: "1"` en el `env` del workflow).
 
 ---
 

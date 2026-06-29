@@ -305,7 +305,7 @@ def analizar_con_claude(job: dict) -> dict:
     bandas_text = str(ia_cfg.get("bandas_puntuacion", "")).strip()
     skills_canonicos = ", ".join(f'"{k}"' for k in CONFIG["skills"].keys())
 
-    prompt = f"""Eres una experta en reclutamiento técnico para perfiles Data Science con dominio físico/industrial. Analiza si esta oferta encaja con el perfil del usuario, clasifica el eje sectorial y extrae los skills técnicos requeridos.
+    prompt = f"""Eres una experta en reclutamiento técnico para perfiles de datos (Data Science / Data Analytics / ML). Analiza si esta oferta encaja con el perfil del usuario, clasifica el eje sectorial y extrae los skills técnicos requeridos.
 
 PERFIL DEL USUARIO:
 {CONFIG["perfil"]}
@@ -331,7 +331,7 @@ Asigna UNO de estos valores al campo "eje":
 {ejes_text}
 
 ═══ CRITERIOS DE PUNTUACIÓN (agnósticos al eje) ═══
-Los ejes (principal, climate_tech, industrial, geoespacial) compiten en igualdad. El eje "otros" se penaliza por falta de fit narrativo.
+Todos los ejes definidos compiten en igualdad, salvo "otros", que se penaliza por falta de fit narrativo (cajón de sastre sin dominio claro).
 
 {bandas_text}
 
@@ -344,10 +344,10 @@ Los ejes (principal, climate_tech, industrial, geoespacial) compiten en igualdad
 ═══ CRITERIOS DE DESCARTE (encaja=false) ═══
 {criterios_descarte_text}
 
-Sé preciso: el usuario tiene experiencia industrial real con Python en producción,
-pero puede que sin título formal de "Data Scientist". No infles la puntuación por
-afinidad de empresa si el rol no encaja con su nivel actual. Tampoco la desinfles
-por geografía o idioma si el rol es técnicamente compatible y remoto real.
+Sé preciso: básate en el perfil del usuario tal como está descrito arriba, sin dar
+por hechas experiencias que no menciona. No infles la puntuación por afinidad de
+empresa si el rol no encaja con su nivel. Tampoco la desinfles por geografía o
+idioma si el rol es técnicamente compatible y remoto real.
 
 ═══ SEÑALES DE ALERTA en "punto_clave" con ⚠️ ═══
 {senales_alerta_text}

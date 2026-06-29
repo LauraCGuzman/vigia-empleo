@@ -47,7 +47,7 @@ configuracion_general:
   # Raising this number increases the Claude API cost.
   # Máximo de ofertas que se analizan con IA por ejecución.
   # Subir este número aumenta el coste de la API de Claude.
-  max_ofertas: 300
+  max_ofertas: 10
 
   # AI model for analysing listings.
   # claude-haiku-4-5-20251001  → faster and cheaper (recommended)  /  más rápido y barato (recomendado)
@@ -65,14 +65,11 @@ configuracion_general:
 
 busquedas_linkedin_indeed:
   # ← Replace these examples with your own searches / Reemplaza estos ejemplos con tus propias búsquedas
-  - ["Data Scientist", "Spain"]
   - ["Data Analyst", "Spain"]
-  - ["Machine Learning Engineer", "Spain"]
-  - ["Analytics Engineer", "Spain"]
-  - ["Data Engineer", "Spain"]
-  - ["ML Engineer", "Spain"]
-  - ["Científico de datos", "España"]
+  - ["Junior Data Analyst", "Spain"]
+  - ["Business Intelligence Analyst", "Spain"]
   - ["Analista de datos", "España"]
+  - ["Analista de datos junior", "España"]
 
 
 # ──────────────────────────────────────────────────────────────
@@ -85,10 +82,7 @@ busquedas_linkedin_indeed:
 
 busquedas_climatebase:
   # ← Replace these examples with your own searches / Reemplaza estos ejemplos con tus propias búsquedas
-  - "data scientist"
   - "data analyst"
-  - "machine learning engineer"
-  - "climate data scientist"
   - "sustainability data analyst"
 
 
@@ -108,20 +102,15 @@ empresas_objetivo:
   tier_1_maxima_prioridad:
     - google
     - microsoft
-    - amazon
-    - meta
 
   tier_2_tech_mediana:
     - stripe
-    - notion
-    - figma
     - datadog
 
   tier_3_consultoria_y_otros:
-    - mckinsey
     - deloitte
     - accenture
-    - capgemini
+   
 
 
 # ──────────────────────────────────────────────────────────────
@@ -138,9 +127,6 @@ palabras_excluir:
   - prácticas
   - internship
   - intern
-  - sin experiencia
-  - recién titulado
-  - recien titulado
   - student
   - estudiante
   - trainee
@@ -159,24 +145,22 @@ palabras_excluir:
 criterios_ia:
 
   # Sector axes — Claude classifies each listing into one of these axes.
-  # You can change the descriptions or add new axes.
+  # 'otros' is a special catch-all (penalised); keep it. The rest are EXAMPLES:
+  # rename them and rewrite the descriptions to match your own target sectors.
   # Ejes sectoriales — Claude clasifica cada oferta en uno de estos ejes.
-  # Puedes cambiar las descripciones o añadir nuevos ejes.
+  # 'otros' es un cajón de sastre especial (se penaliza); consérvalo. El resto son
+  # EJEMPLOS: renómbralos y reescribe las descripciones según tus sectores objetivo.
   ejes:
     principal: >
-      energía / utilities / red eléctrica / renovables / O&M de plantas.
-      Empresas tipo Iberdrola, REE/Redeia, Endesa, Acciona, Naturgy, Siemens Energy,
-      Schneider Electric, Vestas, ABB, Statkraft, EDP, Holaluz, RatedPower.
-    climate_tech: >
-      MRV climática, carbon accounting, climate analytics corporativos, energy intelligence
-      platforms, climate risk físico. Empresas tipo Pachama, Sylvera, CarbonChain,
-      Jupiter Intelligence, Kpler, ICIS, Wood Mackenzie, reaseguradoras.
-    industrial: >
-      manufacturing analytics, predictive maintenance, IoT industrial, calidad de proceso,
-      sensores industriales. Empresas tipo Aizon, Augury, Uptake, C3.ai (operations).
-    geoespacial: >
-      earth observation, remote sensing, GIS, análisis satelital.
-      Empresas tipo GMV, Satellogic, Planet Labs, Hisdesat.
+      Tu sector o dominio objetivo nº1: el que mejor encaja con tu perfil.
+      Describe el tipo de empresa y rol, con ejemplos de empresas si quieres.
+      (Ejemplo: "fintech / pagos / banca digital. Empresas tipo Stripe, Adyen, BBVA".)
+    secundario_a: >
+      Un segundo dominio que también te encaja bien. Renómbralo o bórralo.
+      (Ejemplo: "salud / biotech / dispositivos médicos. Empresas tipo Roche, Veeva".)
+    secundario_b: >
+      Un tercer dominio opcional. Renómbralo o bórralo.
+      (Ejemplo: "industria / manufacturing / IoT industrial. Empresas tipo Siemens, ABB".)
     otros: >
       data/ML genérico sin dominio claro, consultoría delivery,
       sectores fuera de los anteriores.
@@ -186,22 +170,21 @@ criterios_ia:
   # Bandas de puntuación — define qué puntúa cada nota (1-10).
   # Adapta las descripciones a tu perfil y lo que buscas.
   bandas_puntuacion: |
-    - 8-10: rol DS/DA con uso de Python + (ML o series temporales o anomaly detection) + dominio técnico relevante para el usuario. Experiencia requerida acorde al perfil. Encaja sin esfuerzo.
-    - 6-7: data/ML en industria o consultoría técnica. Eje válido pero stack o seniority algo desplazado.
-    - 4-5: datos o ingeniería con encaje técnico pero sin componente sectorial relevante, o rol principalmente BI/reporting.
-    - <4: sin relación con datos o ingeniería técnica.
+    - 8-10: rol de Data Analyst júnior / entry-level (0-1 años; las prácticas cuentan) con skills de analista (Excel, SQL, BI/dashboards, Python básico) en un eje sectorial relevante. Pide poca o ninguna experiencia: encaja sin estirarse.
+    - 6-7: rol de datos de nivel júnior con buen encaje pero algo por encima (pide ~2 años) o con stack/sector algo desplazados.
+    - 4-5: rol relacionado con los datos pero de encaje parcial: pide más experiencia de la que tiene el usuario, tecnología que no maneja, o foco principal en otra función.
+    - <4: sin relación con el análisis de datos, o claramente sénior.
 
   # Penalties — subtracted from the base score.
   # Adapt or remove those that don't apply to your situation.
   # Penalizaciones — se restan de la puntuación base.
   # Adapta o elimina las que no apliquen a tu situación.
   penalizaciones:
-    - "Rol es principalmente MLOps/plataforma/infraestructura ML (no usuario de modelos): -2"
-    - "Requiere >5 años de experiencia específica en DS/ML puro: -2"
-    - "Requiere stack DevOps pesado (Kubernetes, Terraform, C#/Java/Scala/Go) como núcleo del puesto: -1"
-    - "Ubicación presencial obligatoria en ciudad donde el usuario no puede/quiere estar: -2"
-    - "Ubicación en UE o UK sin mención de 'remote', 'EU remote' o 'fully remote': -1"
-    - "Ubicación fuera de UE/UK sin mención explícita de 'global remote', 'fully remote worldwide' o equivalente: -2"
+    # Examples — adapt them to what does NOT fit you / Ejemplos — adáptalos a lo que NO te encaja.
+    - "Exige más de ~2 años de experiencia (el usuario acaba de empezar): -2"
+    - "El núcleo del puesto es una especialización avanzada (ML/DL, data engineering, MLOps) impropia de un perfil júnior: -1"
+    - "Ubicación presencial obligatoria en un sitio donde el usuario no puede/quiere estar: -2"
+    - "Remoto limitado a un país que no es el del usuario, sin mención de remoto internacional: -1"
 
   # What NOT to penalise — explicit instructions so Claude doesn't deduct points for these.
   # Qué NO penalizar — instrucciones explícitas para que Claude no reste puntos por estos motivos.
@@ -209,22 +192,21 @@ criterios_ia:
     - "Idioma de la oferta: las ofertas en inglés son tan válidas como las de español."
     - "Eje no-principal: una oferta puede sacar 8-9 en cualquier eje si encaja técnicamente."
     - "Empresa internacional sin oficina local: si el rol es remoto real, no penalices."
-    - "Ofertas climate tech de UK/DE/FR que sean remotas pan-europeas reales aunque la 'location' diga una ciudad concreta."
+    - "Ofertas internacionales (UK/DE/FR...) que sean remotas pan-europeas reales aunque la 'location' diga una ciudad concreta."
 
   # Discard criteria — these conditions mark a listing as unsuitable (encaja=false).
   # Criterios de descarte — estas condiciones marcan la oferta como no apta (encaja=false).
   criterios_descarte:
-    - "Más de 6 años de experiencia exigida en DS/ML puro"
-    - "Beca, prácticas, trainee o junior sin experiencia previa"
+    - "Perfil claramente sénior: exige bastantes años de experiencia"
     - "Relocalización obligatoria sin opción remota"
-    - "100% presencial en ubicación que el usuario no acepta"
-    - "Ubicación fuera de UE/UK que no mencione explícitamente 'remote anywhere', 'global remote' o equivalente"
+    - "100% presencial en una ubicación que el usuario no acepta"
+    - "Remoto limitado a un país/región fuera del alcance del usuario, sin opción internacional"
 
   # Red flags — Claude includes them in 'punto_clave' with ⚠️ when detected.
   # Señales de alerta — Claude las incluye en el 'punto_clave' con ⚠️ cuando las detecta.
   senales_alerta:
-    - "'reportarás al CTO', 'serás el primero en datos', 'construir desde cero'"
-    - "Lista de responsabilidades muy heterogénea (DS + DevOps + Frontend + ...)"
-    - "'buscamos autonomía e iniciativa', 'entorno dinámico'"
-    - "Stack caótico o proyecto heredado sin metodología"
-    - "Rol único de DS en la empresa (sin equipo de datos existente)"
+    - "'serás la primera persona de datos', 'construir el área desde cero', 'reportarás directamente a dirección' (mala señal para un júnior sin mentoría)"
+    - "Lista de responsabilidades muy heterogénea (datos + IT + soporte + ...)"
+    - "'buscamos autonomía total', 'entorno muy dinámico' como única descripción del puesto"
+    - "Stack caótico o proyecto heredado sin documentación ni metodología"
+    - "Rol único de datos en la empresa (sin equipo ni nadie sénior de quien aprender)"
