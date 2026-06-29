@@ -47,8 +47,6 @@ jobs:
         run: python job_alert.py
 
       - name: 💾 Commit skills tracker actualizado
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Proporciona el token explícitamente al entorno
         run: |
           git config user.name "vigia-bot"
           git config user.email "actions@github.com"
@@ -57,8 +55,8 @@ jobs:
             echo "ℹ️ Sin cambios en skills_tracker.json — no se hace commit"
           else
             git commit -m "📊 skills tracker $(date +%Y-%m-%d)"
-            # Usamos el token directamente para autenticar el push de forma segura frente a errores 403
-            git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git HEAD:${{ github.ref_name }}
+            # Al tener 'permissions: contents: write' arriba, esto funciona de forma nativa e invisible:
+            git push
           fi
 
       - name: 📄 Verificar y guardar preview del email (artefacto)
