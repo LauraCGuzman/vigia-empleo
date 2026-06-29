@@ -1,4 +1,60 @@
 {
-  "semanas": [],
-  "acumulado": {}
+  "semanas": [
+    {
+      "fecha": "2026-06-29",
+      "ofertas_analizadas": 3,
+      "skills": {
+        "Excel": 2,
+        "SQL": 3,
+        "Power BI": 2,
+        "Data Analysis": 3,
+        "KPI Monitoring": 1,
+        "Forecasting": 1,
+        "Time Series": 1,
+        "Data Visualization": 3,
+        "ETL": 2,
+        "EDA": 3,
+        "Python": 2,
+        "Data Cleaning": 2,
+        "Statistics": 1,
+        "KPI Definition & Monitoring": 1,
+        "Dashboard Development": 1,
+        "Data Segmentation": 1,
+        "Generative AI": 1,
+        "Machine Learning": 1,
+        "Git": 1,
+        "Dashboards": 1,
+        "Cloud Data Warehouse": 1,
+        "Energy Data": 1,
+        "Data Interpretation": 1,
+        "Reporting": 1
+      }
+    }
+  ],
+  "acumulado": {
+    "Excel": 2,
+    "SQL": 3,
+    "Power BI": 2,
+    "Data Analysis": 3,
+    "KPI Monitoring": 1,
+    "Forecasting": 1,
+    "Time Series": 1,
+    "Data Visualization": 3,
+    "ETL": 2,
+    "EDA": 3,
+    "Python": 2,
+    "Data Cleaning": 2,
+    "Statistics": 1,
+    "KPI Definition & Monitoring": 1,
+    "Dashboard Development": 1,
+    "Data Segmentation": 1,
+    "Generative AI": 1,
+    "Machine Learning": 1,
+    "Git": 1,
+    "Dashboards": 1,
+    "Cloud Data Warehouse": 1,
+    "Energy Data": 1,
+    "Data Interpretation": 1,
+    "Reporting": 1
+  }
 }
