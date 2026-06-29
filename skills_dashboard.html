@@ -22,887 +22,667 @@
     --serif: 'Fraunces', serif;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: var(--bg);
+    background-color: var(--bg);
     color: var(--text);
-    font-family: var(--mono);
-    font-size: 13px;
-    min-height: 100vh;
-    line-height: 1.6;
-    overflow-x: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    padding: 24px;
+    line-height: 1.5;
   }
 
-  /* SCANLINE TEXTURE */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.03) 2px,
-      rgba(0,0,0,0.03) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 28px;
-  }
-
-  /* ── HEADER ── */
   header {
-    margin-bottom: 48px;
-    position: relative;
-  }
-
-  .header-eyebrow {
-    font-size: 10px;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    margin-bottom: 10px;
+    max-width: 1200px;
+    margin: 0 auto 32px auto;
     display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .header-eyebrow::before {
-    content: '';
-    display: inline-block;
-    width: 24px;
-    height: 1px;
-    background: var(--accent);
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
   }
 
   h1 {
     font-family: var(--serif);
-    font-size: 42px;
-    font-weight: 300;
-    letter-spacing: -1px;
-    line-height: 1.1;
-    margin-bottom: 12px;
-  }
-
-  h1 em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .header-sub {
-    color: var(--muted);
-    font-size: 12px;
-    max-width: 480px;
-    line-height: 1.7;
-  }
-
-  .upload-area {
-    margin-top: 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .btn-upload {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: var(--accent);
-    color: #0a0b0d;
-    border: none;
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-upload:hover { background: #d8ff5a; transform: translateY(-1px); }
-
-  .btn-demo {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background: transparent;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-demo:hover { color: var(--text); border-color: var(--muted); }
-
-  .upload-hint {
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  /* ── STAT CARDS ── */
-  .stat-row {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 32px;
-  }
-
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 18px 20px;
-    position: relative;
-    overflow: hidden;
-    animation: fadeUp 0.5s ease both;
-  }
-
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease;
-  }
-
-  .stat-card:hover::before { transform: scaleX(1); }
-
-  .stat-label {
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin-bottom: 8px;
-  }
-
-  .stat-value {
-    font-size: 36px;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1;
+    font-weight: 600;
+    font-size: 28px;
     margin-bottom: 4px;
   }
-
-  .stat-sub {
-    font-size: 11px;
+  .subtitle {
     color: var(--muted);
+    font-size: 14px;
   }
 
-  /* ── MAIN GRID ── */
-  .main-grid {
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn-container {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+  }
+  .btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover {
+    border-color: var(--muted);
+    background: #20242a;
+  }
+  .btn-accent {
+    background: var(--accent);
+    color: var(--bg);
+    border: 1px solid var(--accent);
+    font-weight: 500;
+  }
+  .btn-accent:hover {
+    background: #b5da3f;
+    border-color: #b5da3f;
+  }
+  .btn-container input[type=file] {
+    position: absolute;
+    left: 0; top: 0; opacity: 0;
+    font-size: 100px; cursor: pointer;
+  }
+
+  .file-status {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--muted);
+    margin-top: 4px;
+    text-align: right;
+  }
+
+  .main-layout {
+    max-width: 1200px;
+    margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
   }
 
-  .panel {
+  @media (max-width: 900px) {
+    .main-layout { grid-template-columns: 1fr; }
+  }
+
+  .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 12px;
     padding: 24px;
+    margin-bottom: 24px;
   }
 
-  .panel-title {
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+  .card-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
-  .panel-title span { color: var(--accent); font-size: 10px; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
 
-  /* ── SKILL BARS ── */
-  .skill-bar-list { display: flex; flex-direction: column; gap: 10px; }
+  .stat-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+  .stat-lbl {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
+  /* Skill rows & bars */
+  .skill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
   .skill-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    animation: fadeUp 0.4s ease both;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    animation: fadeIn 0.4s ease both;
   }
-
   .skill-name {
     width: 140px;
-    flex-shrink: 0;
-    font-size: 12px;
-    color: var(--text);
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #fff;
   }
-
   .skill-track {
-    flex: 1;
-    height: 6px;
+    flex-grow: 1;
+    height: 8px;
     background: var(--surface2);
-    border-radius: 3px;
+    border-radius: 4px;
     overflow: hidden;
   }
-
   .skill-fill {
     height: 100%;
-    border-radius: 3px;
-    transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.1, 0.8, 0.2, 1);
   }
-
-  .fill-yes      { background: var(--accent2); }
+  .fill-yes { background: var(--accent2); }
   .fill-learning { background: var(--warn); }
-  .fill-no       { background: var(--danger); opacity: 0.7; }
-
+  .fill-no { background: var(--muted); opacity: 0.6; }
+  
   .skill-count {
-    width: 28px;
+    width: 45px;
     text-align: right;
-    font-size: 11px;
     color: var(--muted);
   }
-
   .skill-status {
-    width: 22px;
+    width: 20px;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
   }
 
-  /* ── GAP MATRIX ── */
-  .gap-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-
+  /* Gap analysis tags */
   .gap-section-title {
-    font-size: 10px;
+    font-size: 12px;
+    font-family: var(--mono);
     color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
     margin-bottom: 8px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border);
+    text-transform: uppercase;
   }
-
   .gap-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
   }
-
   .gap-tag {
-    font-size: 11px;
-    padding: 3px 9px;
-    border-radius: 3px;
-    cursor: default;
-    transition: all 0.15s;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid transparent;
   }
+  .gt-yes { background: rgba(74, 240, 184, 0.06); border-color: rgba(74, 240, 184, 0.2); color: var(--accent2); }
+  .gt-learning { background: rgba(240, 168, 74, 0.06); border-color: rgba(240, 168, 74, 0.2); color: var(--warn); }
+  .gt-no { background: rgba(90, 96, 114, 0.06); border-color: rgba(90, 96, 114, 0.2); color: #a0a5b5; }
 
-  .gap-tag:hover { transform: translateY(-1px); }
-
-  .gt-yes      { background: rgba(74,240,184,0.1); color: var(--accent2); border: 1px solid rgba(74,240,184,0.25); }
-  .gt-learning { background: rgba(240,168,74,0.1); color: var(--warn);    border: 1px solid rgba(240,168,74,0.25); }
-  .gt-no       { background: rgba(240,80,74,0.08); color: var(--danger);  border: 1px solid rgba(240,80,74,0.2); }
-
-  /* ── TREND CHART (SVG) ── */
-  .trend-wrap {
-    width: 100%;
-    overflow: hidden;
+  /* Categories breakdown */
+  .cat-item {
+    margin-bottom: 14px;
   }
-
-  /* ── CATEGORY BREAKDOWN ── */
-  .cat-list { display: flex; flex-direction: column; gap: 14px; }
-
-  .cat-item {}
-
   .cat-header {
     display: flex;
     justify-content: space-between;
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 5px;
-  }
-
-  .cat-bar {
-    height: 8px;
-    background: var(--surface2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .cat-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 24px;
-    text-align: center;
-    color: var(--muted);
-    gap: 16px;
-  }
-
-  .empty-glyph {
-    font-size: 48px;
-    opacity: 0.3;
-    filter: grayscale(1);
-  }
-
-  .empty-title {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 300;
-    color: var(--text);
-    opacity: 0.5;
-  }
-
-  .empty-body { font-size: 12px; max-width: 340px; line-height: 1.7; }
-
-  /* ── LEGEND ── */
-  .legend {
-    display: flex;
-    gap: 20px;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--muted);
     margin-bottom: 4px;
-    flex-wrap: wrap;
   }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  .cat-bar {
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
   }
-
-  .legend-dot {
-    width: 8px;
-    height: 8px;
+  .cat-fill {
+    height: 100%;
     border-radius: 2px;
   }
 
-  /* ── TIMELINE ── */
-  .timeline { display: flex; flex-direction: column; gap: 0; }
-
-  .tl-week {
+  /* Timeline stream */
+  .timeline-stream {
     display: flex;
-    gap: 16px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
   }
-
-  .tl-week:last-child { border-bottom: none; }
-
+  .tl-week {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
   .tl-date {
+    font-family: var(--mono);
     font-size: 11px;
-    color: var(--muted);
-    white-space: nowrap;
-    min-width: 70px;
-    padding-top: 2px;
+    color: var(--accent);
+    font-weight: bold;
   }
-
   .tl-skills {
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
-    flex: 1;
+    gap: 4px;
   }
-
   .tl-tag {
-    font-size: 10px;
-    padding: 2px 7px;
-    border-radius: 3px;
-    background: var(--surface2);
-    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    background: var(--surface);
     border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: var(--text);
   }
-
   .tl-count {
     font-size: 11px;
     color: var(--muted);
-    white-space: nowrap;
-    padding-top: 2px;
+    text-align: right;
   }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-
-  .stat-card:nth-child(1) { animation-delay: 0.05s; }
-  .stat-card:nth-child(2) { animation-delay: 0.10s; }
-  .stat-card:nth-child(3) { animation-delay: 0.15s; }
-  .stat-card:nth-child(4) { animation-delay: 0.20s; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .stat-row  { grid-template-columns: repeat(2, 1fr); }
-    .gap-grid  { grid-template-columns: 1fr; }
-  }
-
-  @media (max-width: 500px) {
-    .stat-row { grid-template-columns: 1fr 1fr; }
-    h1 { font-size: 28px; }
-  }
-
-  /* ── FULL WIDTH PANELS ── */
-  .full-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 24px;
-    margin-bottom: 16px;
-  }
-
-  input[type="file"] { display: none; }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <header>
-    <div class="header-eyebrow">Vigía de Empleo</div>
-    <h1>Skills del <em>mercado</em><br>energético</h1>
-    <p class="header-sub">
-      Tracking semanal de lo que piden las ofertas · gap analysis · evolución en el tiempo.<br>
-      Alimentado automáticamente por el pipeline de búsqueda.
-    </p>
-    <div class="upload-area">
-      <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
-        ↑ Cargar skills_tracker.json
-      </button>
-      <button class="btn-demo" onclick="loadDemo()">
-        Cargar datos demo
-      </button>
-      <span class="upload-hint">El archivo se genera automáticamente cada lunes en el repo</span>
-      <input type="file" id="fileInput" accept=".json" onchange="handleFile(event)">
-      <input type="file" id="habilidadesInput" accept=".yaml,.yml" onchange="handleHabilidadesFile(event)">
-    </div>
-    <div class="upload-area" style="margin-top:8px;">
-      <button class="btn-upload" onclick="document.getElementById('habilidadesInput').click()">
-        ↑ Cargar habilidades.yaml
-      </button>
-      <span id="habilidades-status" class="upload-hint">usando niveles embebidos — carga el YAML para sincronizar</span>
-    </div>
-  </header>
-
-  <!-- STATS -->
-  <div class="stat-row" id="statRow">
-    <div class="stat-card">
-      <div class="stat-label">Semanas analizadas</div>
-      <div class="stat-value" id="s-semanas">—</div>
-      <div class="stat-sub">desde el inicio del tracking</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Skills distintos detectados</div>
-      <div class="stat-value" id="s-skills">—</div>
-      <div class="stat-sub">en el acumulado total</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Ofertas analizadas</div>
-      <div class="stat-value" id="s-ofertas">—</div>
-      <div class="stat-sub">total histórico</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Gap cubierto</div>
-      <div class="stat-value" id="s-gap" style="color:var(--accent2)">—</div>
-      <div class="stat-sub">skills con ✅ o 🔄 vs top 20</div>
-    </div>
+<header>
+  <div>
+    <h1>Skills del Mercado</h1>
+    <div class="subtitle">Cuadro de mando evolutivo · Vigía de Empleo</div>
   </div>
-
-  <!-- MAIN GRID: top skills + gap matrix -->
-  <div class="main-grid">
-
-    <div class="panel">
-      <div class="panel-title">
-        Top skills acumulados
-        <span id="skills-subtitle">acumulado total</span>
+  <div class="controls">
+    <div>
+      <div class="btn-container">
+        <button class="btn">1. Cargar habilidades.yaml</button>
+        <input type="file" id="habilidades-file" accept=".yaml,.yml" onchange="handleHabilidadesFile(event)" />
       </div>
-      <div class="legend" style="margin-bottom:16px;">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--accent2)"></div> Consolidado</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--warn)"></div> En curso</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--danger)"></div> Pendiente</div>
-      </div>
-      <div class="skill-bar-list" id="skillBars">
-        <div class="empty-state">
-          <div class="empty-glyph">📊</div>
-          <div class="empty-title">Sin datos</div>
-          <div class="empty-body">Carga el archivo skills_tracker.json generado por el pipeline</div>
-        </div>
-      </div>
+      <div class="file-status" id="habilidades-status">Falta configuración</div>
     </div>
-
-    <div class="panel">
-      <div class="panel-title">
-        Gap analysis · top 20 skills
-        <span id="gap-pct">—</span>
+    <div>
+      <div class="btn-container">
+        <button class="btn btn-accent">2. Cargar skills_tracker.json</button>
+        <input type="file" id="tracker-file" accept=".json" onchange="handleFile(event)" />
       </div>
+      <div class="file-status" id="tracker-status">Falta archivo de datos</div>
+    </div>
+    <button class="btn" onclick="loadDemo()" style="border-color: rgba(200,240,74,0.3)">Ver Demo</button>
+  </div>
+</header>
+
+<div class="main-layout">
+  <main>
+    <section class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-val" id="s-semanas">0</div>
+        <div class="stat-lbl">Semanas analizadas</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="s-ofertas">0</div>
+        <div class="stat-lbl">Ofertas evaluadas</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="s-skills">0</div>
+        <div class="stat-lbl">Skills detectadas</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="s-gap" style="color:var(--accent2)">0%</div>
+        <div class="stat-lbl">Cobertura Top 20</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-title">
+        <span>Demanda en el Mercado (Top 20 global)</span>
+        <span style="font-size:12px; font-weight:normal; color:var(--muted)">Sincronizado con tus niveles locales</span>
+      </div>
+      <div class="skill-list" id="skillBars">
+        </div>
+    </section>
+  </main>
+
+  <aside>
+    <section class="card">
+      <div class="card-title">Matriz de Brecha (Top 20)</div>
       <div id="gapMatrix">
-        <div class="empty-state" style="padding:40px 0;">
-          <div class="empty-glyph">🎯</div>
-          <div class="empty-title">Sin datos</div>
         </div>
-      </div>
-    </div>
+      <div id="gap-pct" style="font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:14px; text-align:right;"></div>
+    </section>
 
-  </div>
+    <section class="card">
+      <div class="card-title">Peso del Mercado por tu Nivel</div>
+      <div id="catList">
+        </div>
+    </section>
 
-  <!-- CATEGORY BREAKDOWN -->
-  <div class="full-panel">
-    <div class="panel-title">
-      Demanda por categoría
-      <span>frecuencia relativa en ofertas</span>
-    </div>
-    <div class="cat-list" id="catList">
-      <div class="empty-state" style="padding:30px 0;">
-        <div class="empty-body">Carga datos para ver el breakdown por categoría</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TIMELINE -->
-  <div class="full-panel">
-    <div class="panel-title">
-      Histórico semanal
-      <span>skills nuevos por semana</span>
-    </div>
-    <div class="timeline" id="timeline">
-      <div class="empty-state" style="padding:30px 0;">
-        <div class="empty-body">El timeline se construye semana a semana</div>
-      </div>
-    </div>
-  </div>
-
+    <section class="card">
+      <div class="card-title">Historial por Semanas</div>
+      <div class="timeline-stream" id="timeline">
+        </div>
+    </section>
+  </aside>
 </div>
 
 <script>
-// ── ESTADO ACTUAL DE SKILLS (debe coincidir con job_alert.py) ──
-const MY_SKILLS = {
-  // Lenguajes
-  "Python": "yes", "SQL": "learning", "R": "no", "Scala": "no", "Java": "no",
-  // Librerías DS
-  "pandas": "yes", "NumPy": "yes", "scikit-learn": "learning",
-  "matplotlib": "yes", "Plotly": "yes", "seaborn": "learning",
-  // ML/DL
-  "TensorFlow": "no", "PyTorch": "no", "XGBoost": "no", "LightGBM": "no",
-  "series temporales": "yes", "forecasting": "learning", "anomaly detection": "yes",
-  // Cloud/MLOps
-  "AWS": "no", "Azure": "no", "GCP": "no",
-  "Docker": "no", "Kubernetes": "no", "CI/CD": "yes", "GitHub Actions": "yes",
-  "MLflow": "no", "Airflow": "no",
-  // Datos
-  "ETL": "yes", "PySpark": "no", "Spark": "no", "Kafka": "no",
-  "dbt": "no", "Redshift": "no", "BigQuery": "no",
-  // IA generativa
-  "LLMs": "yes", "RAG": "no", "LangChain": "no", "prompt engineering": "yes",
-  "api integration": "yes", "agentic ai": "no",
-  // Dominio
-  "energía": "yes", "IoT": "yes", "sensores": "yes", "smart grid": "learning",
-  "renovables": "yes",
-  //Otros
-  "análisis de datos": "yes", "data analysis": "yes",
-};
-
-// Categorías para el breakdown
-const CATEGORIES = {
-  "Lenguajes": ["Python", "SQL", "R", "Scala", "Java"],
-  "Librerías DS": ["pandas", "NumPy", "scikit-learn", "matplotlib", "Plotly", "seaborn"],
-  "ML / DL": ["TensorFlow", "PyTorch", "XGBoost", "LightGBM", "scikit-learn", "series temporales", "forecasting", "anomaly detection"],
-  "Cloud / MLOps": ["AWS", "Azure", "GCP", "Docker", "Kubernetes", "CI/CD", "GitHub Actions", "MLflow", "Airflow"],
-  "Datos / Pipelines": ["ETL", "PySpark", "Spark", "Kafka", "dbt", "Redshift", "BigQuery", "SQL"],
-  "IA Generativa": ["LLMs", "RAG", "LangChain", "prompt engineering"],
-  "Dominio energético": ["energía", "IoT", "sensores", "smart grid", "renovables"],
-};
-
-const CAT_COLORS = {
-  "Lenguajes":          "#c8f04a",
-  "Librerías DS":       "#4af0b8",
-  "ML / DL":            "#f0a84a",
-  "Cloud / MLOps":      "#a84af0",
-  "Datos / Pipelines":  "#4a8af0",
-  "IA Generativa":      "#f04a8a",
-  "Dominio energético": "#f0e04a",
-};
-
-let trackerData = null;
-let skillsLookup = null; // Map built from habilidades.yaml; null → use MY_SKILLS fallback
-
-const NIVEL_MAP = { consolidado: 'yes', aprendiendo: 'learning', pendiente: 'no' };
-
-function buildSkillsLookup(parsed) {
-  const map = new Map();
-  for (const h of (parsed.habilidades || [])) {
-    const status = NIVEL_MAP[h.nivel] || 'no';
-    map.set(h.nombre.toLowerCase(), status);
-    for (const alias of (h.aliases || [])) {
-      map.set(String(alias).toLowerCase(), status);
-    }
-  }
-  return map;
-}
-
-function handleHabilidadesFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const parsed = jsyaml.load(e.target.result);
-      if (!parsed || !parsed.habilidades) throw new Error('Formato incorrecto: falta la clave "habilidades"');
-      skillsLookup = buildSkillsLookup(parsed);
-      const el = document.getElementById('habilidades-status');
-      el.textContent = `✓ ${file.name} · ${skillsLookup.size} entradas cargadas`;
-      el.style.color = 'var(--accent2)';
-      if (trackerData) renderAll(trackerData);
-    } catch (err) {
-      alert('Error leyendo el YAML: ' + err.message);
-    }
+  // ── CONFIGURACIÓN DINÁMICA DE CATEGORÍAS (Basada en el nivel de habilidades.yaml) ──
+  let CATEGORIES = {};
+  const CAT_COLORS = {
+    "Consolidado": "#c8f04a",
+    "Aprendiendo": "#4af0b8",
+    "Pendiente":    "#bdc3c7"
   };
-  reader.readAsText(file);
-}
 
-// ── FILE HANDLING ──
-function handleFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      trackerData = data;
-      renderAll(data);
-    } catch {
-      alert('Error leyendo el JSON. ¿Es el archivo correcto?');
-    }
-  };
-  reader.readAsText(file);
-}
+  let trackerData = null;
+  let skillsLookup = null; 
 
-// ── DEMO DATA ──
-function loadDemo() {
-  const demo = {
-    semanas: [
-      {
-        fecha: "2026-04-07",
-        ofertas_analizadas: 5,
-        skills: { "Python": 5, "SQL": 4, "pandas": 3, "scikit-learn": 3, "AWS": 2,
-                  "series temporales": 3, "Docker": 1, "ETL": 2, "energía": 4,
-                  "forecasting": 2, "IoT": 2, "TensorFlow": 1, "MLflow": 1 }
-      },
-      {
-        fecha: "2026-04-14",
-        ofertas_analizadas: 8,
-        skills: { "Python": 8, "SQL": 6, "pandas": 5, "scikit-learn": 4, "AWS": 4,
-                  "series temporales": 5, "Docker": 3, "ETL": 3, "energía": 6,
-                  "forecasting": 3, "IoT": 3, "TensorFlow": 2, "PyTorch": 1,
-                  "LLMs": 2, "smart grid": 2, "GitHub Actions": 1, "anomaly detection": 3,
-                  "Azure": 1, "PySpark": 1, "RAG": 1 }
-      },
-      {
-        fecha: "2026-04-21",
-        ofertas_analizadas: 6,
-        skills: { "Python": 6, "SQL": 5, "pandas": 4, "scikit-learn": 4, "AWS": 3,
-                  "series temporales": 4, "Docker": 2, "ETL": 3, "energía": 5,
-                  "forecasting": 3, "IoT": 2, "TensorFlow": 1, "LLMs": 3,
-                  "smart grid": 2, "anomaly detection": 2, "Airflow": 1, "dbt": 1 }
+  const NIVEL_MAP = { consolidado: 'yes', aprendiendo: 'learning', pendiente: 'no' };
+  const NIVEL_LABEL = { consolidado: 'Consolidado', aprendiendo: 'Aprendiendo', pendiente: 'Pendiente' };
+
+  function buildDynamicTaxonomy(parsed) {
+    const map = new Map();
+    const cats = {
+      "Consolidado": [],
+      "Aprendiendo": [],
+      "Pendiente": []
+    };
+
+    for (const h of (parsed.habilidades || [])) {
+      const status = NIVEL_MAP[h.nivel] || 'no';
+      const label = NIVEL_LABEL[h.nivel] || 'Pendiente';
+      
+      // Mapeo indexado para búsquedas rápidas (minúsculas)
+      map.set(h.nombre.toLowerCase(), status);
+      
+      // Añadir el nombre principal y sus aliases a la categoría correspondiente
+      cats[label].push(h.nombre);
+      for (const alias of (h.aliases || [])) {
+        map.set(String(alias).toLowerCase(), status);
+        cats[label].push(String(alias));
       }
-    ],
-    acumulado: {}
-  };
+    }
 
-  // Construir acumulado
-  demo.semanas.forEach(s => {
-    Object.entries(s.skills).forEach(([k, v]) => {
-      demo.acumulado[k] = (demo.acumulado[k] || 0) + v;
+    // Filtrar categorías vacías para no ensuciar la interfaz
+    CATEGORIES = {};
+    Object.entries(cats).forEach(([key, value]) => {
+      if (value.length > 0) CATEGORIES[key] = value;
     });
-  });
 
-  trackerData = demo;
-  renderAll(demo);
-}
-
-// ── RENDER ALL ──
-function renderAll(data) {
-  renderStats(data);
-  renderSkillBars(data.acumulado);
-  renderGapMatrix(data.acumulado);
-  renderCategories(data.acumulado);
-  renderTimeline(data.semanas);
-}
-
-// ── STATS ──
-function renderStats(data) {
-  const semanas = data.semanas.length;
-  const skills  = Object.keys(data.acumulado).length;
-  const ofertas = data.semanas.reduce((s, w) => s + (w.ofertas_analizadas || 0), 0);
-
-  // Gap: top 20 skills, cuántos están cubiertos (yes/learning)
-  const top20 = Object.entries(data.acumulado)
-    .sort((a, b) => b[1] - a[1]).slice(0, 20).map(([k]) => k);
-  const cubiertos = top20.filter(s => {
-    const est = getStatus(s);
-    return est === 'yes' || est === 'learning';
-  }).length;
-  const gapPct = top20.length ? Math.round((cubiertos / top20.length) * 100) : 0;
-
-  document.getElementById('s-semanas').textContent = semanas;
-  document.getElementById('s-skills').textContent  = skills;
-  document.getElementById('s-ofertas').textContent = ofertas;
-  document.getElementById('s-gap').textContent     = gapPct + '%';
-}
-
-// ── SKILL STATUS ──
-function getStatus(skillName) {
-  const lower = skillName.toLowerCase();
-  if (skillsLookup) {
-    return skillsLookup.get(lower) || 'no';
+    return map;
   }
-  // Fallback: hardcoded MY_SKILLS (kept in sync until habilidades.yaml is loaded)
-  for (const [k, v] of Object.entries(MY_SKILLS)) {
-    if (k.toLowerCase() === lower) return v;
+
+  function handleHabilidadesFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = jsyaml.load(e.target.result);
+        if (!parsed || !parsed.habilidades) throw new Error('Formato incorrecto: falta la clave "habilidades"');
+        
+        skillsLookup = buildDynamicTaxonomy(parsed);
+        
+        const el = document.getElementById('habilidades-status');
+        el.textContent = `✓ ${file.name} · ${skillsLookup.size} términos cargados`;
+        el.style.color = 'var(--accent2)';
+        
+        if (trackerData) renderAll(trackerData);
+      } catch (err) {
+        alert('Error leyendo el YAML: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
   }
-  return 'no';
-}
 
-// ── SKILL BARS ──
-function renderSkillBars(acumulado) {
-  const el = document.getElementById('skillBars');
-  const top = Object.entries(acumulado)
-    .sort((a, b) => b[1] - a[1]).slice(0, 20);
+  // ── FILE HANDLING ──
+  function handleFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        trackerData = data;
+        
+        const el = document.getElementById('tracker-status');
+        el.textContent = `✓ ${file.name} cargado`;
+        el.style.color = 'var(--accent2)';
 
-  if (!top.length) return;
+        renderAll(data);
+      } catch {
+        alert('Error leyendo el JSON. ¿Es el archivo correcto?');
+      }
+    };
+    reader.readAsText(file);
+  }
 
-  const maxVal = top[0][1];
-  const statusEmoji = { yes: '✅', learning: '🔄', no: '❌' };
-  const fillClass   = { yes: 'fill-yes', learning: 'fill-learning', no: 'fill-no' };
+  // ── INYECCIÓN COMPLETA DE DATOS DEMO (Sincronizada) ──
+  function loadDemo() {
+    // 1. Simular la estructura exacta de habilidades.yaml del usuario
+    const yamlDemo = {
+      habilidades: [
+        { nombre: "Python", nivel: "consolidado", aliases: ["python3", "py"] },
+        { nombre: "SQL", nivel: "consolidado", aliases: ["postgresql", "mysql"] },
+        { nombre: "pandas", nivel: "consolidado", aliases: ["pandas"] },
+        { nombre: "Data Analysis", nivel: "consolidated", aliases: ["análisis de datos"] },
+        { nombre: "Git", nivel: "aprendiendo", aliases: ["git"] },
+        { nombre: "Power BI", nivel: "aprendiendo", aliases: ["powerbi"] },
+        { nombre: "Time Series", nivel: "pendiente", aliases: ["series temporales"] },
+        { nombre: "Forecasting", nivel: "pendiente", aliases: ["predicción"] },
+        { nombre: "Machine Learning", nivel: "pendiente", aliases: ["ml"] },
+        { nombre: "ETL", nivel: "pendiente", aliases: ["pipelines"] },
+        { nombre: "AWS", nivel: "pendiente", aliases: ["aws"] },
+        { nombre: "Docker", nivel: "pendiente", aliases: ["docker"] }
+      ]
+    };
+    skillsLookup = buildDynamicTaxonomy(yamlDemo);
+    document.getElementById('habilidades-status').textContent = "✓ (Demo) habilidades.yaml emulado";
+    document.getElementById('habilidades-status').style.color = 'var(--warn)';
 
-  el.innerHTML = top.map(([skill, count], i) => {
-    const status = getStatus(skill);
-    const pct    = Math.round((count / maxVal) * 100);
-    return `
-      <div class="skill-row" style="animation-delay:${i * 0.03}s">
-        <div class="skill-name" title="${skill}">${skill}</div>
-        <div class="skill-track">
-          <div class="skill-fill ${fillClass[status]}" style="width:${pct}%"></div>
+    // 2. Simular el JSON cronológico del pipeline tracker
+    const jsonDemo = {
+      semanas: [
+        {
+          fecha: "2026-06-15",
+          ofertas_analizadas: 12,
+          skills: { "Python": 10, "SQL": 8, "pandas": 6, "Data Analysis": 5, "Power BI": 4, "Git": 3, "Machine Learning": 4, "ETL": 2 }
+        },
+        {
+          fecha: "2026-06-22",
+          ofertas_analizadas: 15,
+          skills: { "Python": 14, "SQL": 11, "pandas": 9, "Data Analysis": 7, "Machine Learning": 6, "Time Series": 5, "Forecasting": 4, "AWS": 3, "Docker": 2 }
+        }
+      ],
+      acumulado: {}
+    };
+
+    // Construir agregación del acumulado de mercado
+    jsonDemo.semanas.forEach(s => {
+      Object.entries(s.skills).forEach(([skill, count]) => {
+        jsonDemo.acumulado[skill] = (jsonDemo.acumulado[skill] || 0) + count;
+      });
+    });
+
+    trackerData = jsonDemo;
+    document.getElementById('tracker-status').textContent = "✓ (Demo) skills_tracker.json emulado";
+    document.getElementById('tracker-status').style.color = 'var(--warn)';
+
+    renderAll(jsonDemo);
+  }
+
+  // ── RENDER ALL ──
+  function renderAll(data) {
+    renderStats(data);
+    renderSkillBars(data.acumulado);
+    renderGapMatrix(data.acumulado);
+    renderCategories(data.acumulado);
+    renderTimeline(data.semanas);
+  }
+
+  // ── STATS ──
+  function renderStats(data) {
+    const semanas = data.semanas.length;
+    const skills  = Object.keys(data.acumulado).length;
+    const ofertas = data.semanas.reduce((s, w) => s + (w.ofertas_analizadas || 0), 0);
+
+    const top20 = Object.entries(data.acumulado)
+      .sort((a, b) => b[1] - a[1]).slice(0, 20).map(([k]) => k);
+    const cubiertos = top20.filter(s => {
+      const est = getStatus(s);
+      return est === 'yes' || est === 'learning';
+    }).length;
+    const gapPct = top20.length ? Math.round((cubiertos / top20.length) * 100) : 0;
+
+    document.getElementById('s-semanas').textContent = semanas;
+    document.getElementById('s-skills').textContent  = skills;
+    document.getElementById('s-ofertas').textContent = ofertas;
+    document.getElementById('s-gap').textContent     = gapPct + '%';
+  }
+
+  // ── RETORNO DE ESTADO DINÁMICO ──
+  function getStatus(skillName) {
+    if (!skillsLookup) return 'no';
+    return skillsLookup.get(skillName.toLowerCase()) || 'no';
+  }
+
+  // ── SKILL BARS ──
+  function renderSkillBars(acumulado) {
+    const el = document.getElementById('skillBars');
+    const top = Object.entries(acumulado)
+      .sort((a, b) => b[1] - a[1]).slice(0, 20);
+
+    if (!top.length) { el.innerHTML = ''; return; }
+
+    const maxVal = top[0][1];
+    const statusEmoji = { yes: '✅', learning: '🔄', no: '❌' };
+    const fillClass   = { yes: 'fill-yes', learning: 'fill-learning', no: 'fill-no' };
+
+    el.innerHTML = top.map(([skill, count], i) => {
+      const status = getStatus(skill);
+      const pct    = Math.round((count / maxVal) * 100);
+      return `
+        <div class="skill-row" style="animation-delay:${i * 0.02}s">
+          <div class="skill-name" title="${skill}">${skill}</div>
+          <div class="skill-track">
+            <div class="skill-fill ${fillClass[status]}" style="width:${pct}%"></div>
+          </div>
+          <div class="skill-count">${count}×</div>
+          <div class="skill-status">${statusEmoji[status]}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── GAP MATRIX ──
+  function renderGapMatrix(acumulado) {
+    const el = document.getElementById('gapMatrix');
+    const top20 = Object.entries(acumulado)
+      .sort((a, b) => b[1] - a[1]).slice(0, 20).map(([k]) => k);
+
+    if (!top20.length) { el.innerHTML = ''; return; }
+
+    const yes      = top20.filter(s => getStatus(s) === 'yes');
+    const learning = top20.filter(s => getStatus(s) === 'learning');
+    const no       = top20.filter(s => getStatus(s) === 'no');
+
+    const cubiertos = yes.length + learning.length;
+    const pct = Math.round((cubiertos / top20.length) * 100);
+    document.getElementById('gap-pct').textContent = `${cubiertos}/${top20.length} cubiertos (${pct}%)`;
+
+    const section = (title, items, cls) => `
+      <div style="margin-bottom:10px;">
+        <div class="gap-section-title">${title} (${items.length})</div>
+        <div class="gap-tags">
+          ${items.map(s => `<span class="gap-tag ${cls}">${s}</span>`).join('')}
+          ${items.length === 0 ? '<span style="font-size:11px;color:var(--muted)">—</span>' : ''}
         </div>
-        <div class="skill-count">${count}×</div>
-        <div class="skill-status">${statusEmoji[status]}</div>
       </div>`;
-  }).join('');
-}
 
-// ── GAP MATRIX ──
-function renderGapMatrix(acumulado) {
-  const el = document.getElementById('gapMatrix');
-  const top20 = Object.entries(acumulado)
-    .sort((a, b) => b[1] - a[1]).slice(0, 20).map(([k]) => k);
-
-  const yes      = top20.filter(s => getStatus(s) === 'yes');
-  const learning = top20.filter(s => getStatus(s) === 'learning');
-  const no       = top20.filter(s => getStatus(s) === 'no');
-
-  const cubiertos = yes.length + learning.length;
-  const pct = Math.round((cubiertos / top20.length) * 100);
-  document.getElementById('gap-pct').textContent = `${cubiertos}/${top20.length} cubiertos (${pct}%)`;
-
-  const section = (title, items, cls) => `
-    <div>
-      <div class="gap-section-title">${title} (${items.length})</div>
-      <div class="gap-tags">
-        ${items.map(s => `<span class="gap-tag ${cls}">${s}</span>`).join('')}
-        ${items.length === 0 ? '<span style="font-size:11px;color:var(--muted)">—</span>' : ''}
-      </div>
-    </div>`;
-
-  el.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:18px;">
-      ${section('✅ Consolidado', yes, 'gt-yes')}
-      ${section('🔄 En curso', learning, 'gt-learning')}
-      ${section('❌ Pendiente', no, 'gt-no')}
-    </div>`;
-}
-
-// ── CATEGORY BREAKDOWN ──
-function renderCategories(acumulado) {
-  const el = document.getElementById('catList');
-  const totalMentions = Object.values(acumulado).reduce((a, b) => a + b, 0);
-
-  const cats = Object.entries(CATEGORIES).map(([cat, skills]) => {
-    const count = skills.reduce((s, sk) => {
-      const val = Object.entries(acumulado).find(([k]) => k.toLowerCase() === sk.toLowerCase());
-      return s + (val ? val[1] : 0);
-    }, 0);
-    return { cat, count };
-  }).sort((a, b) => b.count - a.count);
-
-  const maxCount = cats[0]?.count || 1;
-
-  el.innerHTML = cats.map(({ cat, count }) => {
-    if (!count) return '';
-    const pct    = Math.round((count / totalMentions) * 100);
-    const barPct = Math.round((count / maxCount) * 100);
-    const color  = CAT_COLORS[cat] || '#6b7280';
-    return `
-      <div class="cat-item">
-        <div class="cat-header">
-          <span style="color:var(--text)">${cat}</span>
-          <span>${count} menciones · ${pct}%</span>
-        </div>
-        <div class="cat-bar">
-          <div class="cat-fill" style="width:${barPct}%;background:${color};"></div>
-        </div>
+    el.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        ${section('✅ Consolidado', yes, 'gt-yes')}
+        ${section('🔄 En curso', learning, 'gt-learning')}
+        ${section('❌ Pendiente', no, 'gt-no')}
       </div>`;
-  }).join('');
-}
+  }
 
-// ── TIMELINE ──
-function renderTimeline(semanas) {
-  const el = document.getElementById('timeline');
-  if (!semanas.length) return;
+  // ── CATEGORY BREAKDOWN (Distribución proporcional por estado de tus habilidades) ──
+  function renderCategories(acumulado) {
+    const el = document.getElementById('catList');
+    const totalMentions = Object.values(acumulado).reduce((a, b) => a + b, 0);
 
-  el.innerHTML = [...semanas].reverse().map(week => {
-    const date   = new Date(week.fecha + 'T12:00:00');
-    const label  = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' });
-    const top5   = Object.entries(week.skills || {})
-      .sort((a, b) => b[1] - a[1]).slice(0, 8);
-    const n      = week.ofertas_analizadas || 0;
+    if (!totalMentions || Object.keys(CATEGORIES).length === 0) {
+      el.innerHTML = '<div style="font-size:12px;color:var(--muted)">Sin datos de categorías.</div>';
+      return;
+    }
 
-    return `
-      <div class="tl-week">
-        <div class="tl-date">${label}</div>
-        <div class="tl-skills">
-          ${top5.map(([s, c]) => `<span class="tl-tag">${s} ×${c}</span>`).join('')}
-        </div>
-        <div class="tl-count">${n} oferta${n !== 1 ? 's' : ''}</div>
-      </div>`;
-  }).join('');
-}
+    const cats = Object.entries(CATEGORIES).map(([cat, skills]) => {
+      const count = skills.reduce((s, sk) => {
+        const val = Object.entries(acumulado).find(([k]) => k.toLowerCase() === sk.toLowerCase());
+        return s + (val ? val[1] : 0);
+      }, 0);
+      return { cat, count };
+    }).sort((a, b) => b.count - a.count);
+
+    const maxCount = cats[0]?.count || 1;
+
+    el.innerHTML = cats.map(({ cat, count }) => {
+      if (!count) return '';
+      const pct    = Math.round((count / totalMentions) * 100);
+      const barPct = Math.round((count / maxCount) * 100);
+      const color  = CAT_COLORS[cat] || '#6b7280';
+      return `
+        <div class="cat-item">
+          <div class="cat-header">
+            <span style="color:var(--text)">Nivel: ${cat}</span>
+            <span>${count} menciones · ${pct}%</span>
+          </div>
+          <div class="cat-bar">
+            <div class="cat-fill" style="width:${barPct}%;background:${color};"></div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── TIMELINE ──
+  function renderTimeline(semanas) {
+    const el = document.getElementById('timeline');
+    if (!semanas || !semanas.length) { el.innerHTML = ''; return; }
+
+    el.innerHTML = [...semanas].reverse().map(week => {
+      const date   = new Date(week.fecha + 'T12:00:00');
+      const label  = date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: '2-digit' });
+      const top5   = Object.entries(week.skills || {})
+        .sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const n      = week.ofertas_analizadas || 0;
+
+      return `
+        <div class="tl-week">
+          <div class="tl-date">${label}</div>
+          <div class="tl-skills">
+            ${top5.map(([s, c]) => `<span class="tl-tag">${s} ×${c}</span>`).join('')}
+          </div>
+          <div class="tl-count">${n} oferta${n !== 1 ? 's' : ''}</div>
+        </div>`;
+    }).join('');
+  }
 </script>
 </body>
 </html>
