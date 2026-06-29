@@ -21,6 +21,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
 try:
     from jobspy import scrape_jobs
@@ -91,6 +92,30 @@ def cargar_config() -> dict:
 
 CONFIG = cargar_config()
 SKILLS_TRACKER_PATH = Path("skills_tracker.json")
+
+
+# ─────────────────────────────────────────────
+# CLIENTE CLAUDE COMPARTIDO
+# Se crea UNA sola vez (es thread-safe → reutilizable en el pool).
+# timeout corta conexiones colgadas; max_retries acota el backoff ante
+# 429/529 transitorios. Sin esto, una llamada muerta congela todo el run.
+# ─────────────────────────────────────────────
+
+_CLAUDE_CLIENT = None
+
+
+def _get_claude_client():
+    global _CLAUDE_CLIENT
+    if _CLAUDE_CLIENT is None:
+        api_key = os.getenv("ANTHROPIC_API_KEY")
+        if not api_key:
+            return None
+        _CLAUDE_CLIENT = anthropic.Anthropic(
+            api_key=api_key,
+            timeout=30.0,
+            max_retries=3,
+        )
+    return _CLAUDE_CLIENT
 
 
 # ─────────────────────────────────────────────
@@ -254,8 +279,8 @@ def analizar_con_claude(job: dict) -> dict:
     }
     if not CLAUDE_AVAILABLE:
         return fallback
-    api_key = os.getenv("ANTHROPIC_API_KEY")
-    if not api_key:
+    client = _get_claude_client()
+    if client is None:
         print("  ⚠️  ANTHROPIC_API_KEY no configurada.")
         return fallback
 
@@ -335,7 +360,6 @@ Máximo 20 skills por oferta."""
 
     try:
         modelo = CONFIG.get("configuracion_general", {}).get("modelo_ia", "claude-haiku-4-5-20251001")
-        client = anthropic.Anthropic(api_key=api_key)
         response = client.messages.create(
             model=modelo,
             max_tokens=600,
@@ -749,15 +773,23 @@ def main():
 
     ofertas = muestreo_proporcional(ofertas, cap=max_ofertas)
 
-    print(f"\n🤖 Analizando con Claude...")
+    print(f"\n🤖 Analizando {len(ofertas)} ofertas con Claude (paralelo)...")
     ofertas_finales = []
-    for i, job in enumerate(ofertas):
-        print(f"  [{i+1}/{len(ofertas)}] {job['company']} · {job['title'][:45]}...")
-        analysis = analizar_con_claude(job)
-        job["ia_analysis"] = analysis
-        if analysis.get("puntuacion", 5) >= puntuacion_minima:
-            ofertas_finales.append(job)
-        time.sleep(1.5)
+    total = len(ofertas)
+    completadas = 0
+
+    def _procesar(job):
+        return job, analizar_con_claude(job)
+
+    # Pool pequeño: rápido pero sin reventar rate limits de Haiku.
+    # map() preserva el orden de entrada, así el contador progresa en orden.
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        for job, analysis in ex.map(_procesar, ofertas):
+            completadas += 1
+            print(f"  [{completadas}/{total}] {job['company']} · {job['title'][:45]}...")
+            job["ia_analysis"] = analysis
+            if analysis.get("puntuacion", 5) >= puntuacion_minima:
+                ofertas_finales.append(job)
 
     print(f"\n✅ Ofertas finales: {len(ofertas_finales)}")
     volcar_diagnostico(ofertas)
