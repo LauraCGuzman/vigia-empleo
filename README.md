@@ -68,7 +68,6 @@ Define which technologies you know and where you stand. The system uses them to 
     aliases: [my new skill, another way to write it]
   ```
 
-> **Note:** The skills dashboard (`skills_dashboard.html`) has its own copy of the levels inside the JavaScript code. If you change levels in `habilidades.yaml`, remember to update them in the dashboard too so they match.
 
 ---
 
@@ -332,8 +331,6 @@ Define qué tecnologías conoces y en qué punto estás. El sistema las usa para
     nivel: aprendiendo
     aliases: [mi nueva skill, otra forma de escribirlo]
   ```
-
-> **Nota:** El dashboard de skills (`skills_dashboard.html`) tiene su propia copia de los niveles en el código JavaScript. Si cambias niveles en `habilidades.yaml`, recuerda también actualizarlos en el dashboard para que coincidan.
 
 ---
 
